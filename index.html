@@ -1,79 +1,586 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoonJTech</title>
-  <meta name="description" content="MoonJTech — something big is coming.">
-  <link rel="icon" type="image/png" href="assets/logo.png">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AidVise — Hack the Hustle</title>
+<meta name="description" content="AidVise works out what a person is suited to, writes them a resume for the specific role, and hands employers scored candidates. One hire, two sides, one thread.">
+<link rel="icon" type="image/png" href="assets/logo.png">
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      background: #ffffff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
+<meta property="og:type" content="website">
+<meta property="og:title" content="AidVise — Hack the Hustle">
+<meta property="og:description" content="One hire, two sides, one thread. Career matching, tailored resumes, and scored shortlists.">
+<meta property="og:url" content="https://moonjtech.com/">
+<meta name="twitter:card" content="summary">
 
-    .logo {
-      width: min(420px, 78vw);
-      height: auto;
-      opacity: 0;
-      animation: rise 0.9s ease-out 0.1s forwards;
-    }
+<style>
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+<style>
+  :root {
+    --navy: #013A63;
+    --amber: #FFB703;
+    --steel: #457B9D;
+    --sky: #89D8E9;
 
-    .tagline {
-      margin-top: 34px;
-      color: #1e3461;
-      font-size: clamp(18px, 4.2vw, 26px);
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      opacity: 0;
-      animation: rise 0.9s ease-out 0.45s forwards;
-    }
+    --paper: #FBFAF8;
+    --card: #F1F0ED;
+    --card-deep: #E5E3DE;
+    --rule: #DCDAD4;
 
-    .dots span {
-      display: inline-block;
-      color: #ffc20e;
-      animation: blink 1.6s infinite;
-    }
-    .dots span:nth-child(2) { animation-delay: 0.25s; }
-    .dots span:nth-child(3) { animation-delay: 0.5s; }
+    --ink: var(--navy);
+    --ink-soft: rgba(1, 58, 99, 0.66);
+    --ink-faint: rgba(1, 58, 99, 0.40);
 
-    .footer {
-      position: fixed;
-      bottom: 22px;
-      color: #9aa3b2;
-      font-size: 12.5px;
-      letter-spacing: 0.03em;
-      opacity: 0;
-      animation: rise 0.9s ease-out 0.8s forwards;
-    }
+    --display: "Avenir Next", "Avenir", "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
 
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    --step: clamp(14px, 1.6vw, 17px);
+    --measure: 62ch;
+    --gutter: clamp(20px, 5vw, 72px);
+  }
 
-    @keyframes blink {
-      0%, 100% { opacity: 0.15; }
-      30%      { opacity: 1; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #04182A;
+      --card: #0A2740;
+      --card-deep: #0E3252;
+      --rule: rgba(137, 216, 233, 0.22);
+      --ink: #E8F2F8;
+      --ink-soft: rgba(232, 242, 248, 0.70);
+      --ink-faint: rgba(232, 242, 248, 0.45);
+      --navy: #0B4F82;
     }
+  }
+  :root[data-theme="dark"] {
+    --paper: #04182A;
+    --card: #0A2740;
+    --card-deep: #0E3252;
+    --rule: rgba(137, 216, 233, 0.22);
+    --ink: #E8F2F8;
+    --ink-soft: rgba(232, 242, 248, 0.70);
+    --ink-faint: rgba(232, 242, 248, 0.45);
+    --navy: #0B4F82;
+  }
+  :root[data-theme="light"] {
+    --paper: #FBFAF8;
+    --card: #F1F0ED;
+    --card-deep: #E5E3DE;
+    --rule: #DCDAD4;
+    --navy: #013A63;
+    --ink: #013A63;
+    --ink-soft: rgba(1, 58, 99, 0.66);
+    --ink-faint: rgba(1, 58, 99, 0.40);
+  }
 
-    @media (prefers-reduced-motion: reduce) {
-      .logo, .tagline, .footer { animation: none; opacity: 1; }
-      .dots span { animation: none; opacity: 1; }
-    }
-  </style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: var(--step);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-inline: var(--gutter);
+  }
+
+  .eyebrow {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+  }
+
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 26px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .mark {
+    font-size: clamp(22px, 3vw, 27px);
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: -0.015em;
+  }
+  .mark i { font-style: italic; color: var(--amber); }
+  .mark-tag {
+    display: block;
+    font-size: 10.5px;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: 2px;
+  }
+  .masthead nav {
+    display: flex;
+    gap: 26px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .masthead nav a { color: var(--ink-soft); text-decoration: none; }
+  .masthead nav a:hover, .masthead nav a:focus-visible { color: var(--ink); }
+  @media (max-width: 720px) { .masthead nav { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero { padding-block: clamp(48px, 8vw, 96px) clamp(36px, 6vw, 64px); }
+  .hero h1 {
+    font-size: clamp(34px, 6.4vw, 68px);
+    line-height: 1.04;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    max-width: 15ch;
+  }
+  .hero h1 em { font-style: italic; color: var(--amber); }
+  .hero p {
+    margin: 26px 0 0;
+    max-width: var(--measure);
+    font-size: clamp(16px, 1.9vw, 19px);
+    color: var(--ink-soft);
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+  .btn {
+    font: inherit;
+    font-weight: 700;
+    font-size: 14.5px;
+    padding: 13px 22px;
+    border-radius: 9px;
+    border: 1.5px solid var(--navy);
+    background: var(--navy);
+    color: var(--paper);
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .btn:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(24px, 5vw, 56px);
+    margin-top: clamp(40px, 6vw, 64px);
+    padding-top: 26px;
+    border-top: 1px solid var(--rule);
+  }
+  .stat b {
+    display: block;
+    font-family: var(--mono);
+    font-size: clamp(22px, 3.4vw, 30px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat span { font-size: 12.5px; color: var(--ink-soft); }
+
+  /* ---------- sections ---------- */
+  section { padding-block: clamp(56px, 8vw, 104px); }
+  .section-head { max-width: var(--measure); margin-bottom: clamp(32px, 4vw, 52px); }
+  .section-head h2 {
+    font-size: clamp(26px, 4vw, 40px);
+    line-height: 1.14;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .section-head p { margin: 16px 0 0; color: var(--ink-soft); }
+
+  /* ---------- product samples (mirror the app's card system) ---------- */
+  .samples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 18px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 22px;
+    padding: 20px;
+  }
+  .card-head { display: flex; align-items: flex-start; gap: 12px; }
+  .tile {
+    width: 42px; height: 42px; flex: none;
+    border-radius: 12px;
+    background: var(--card-deep);
+    display: grid; place-items: center;
+    color: var(--amber);
+  }
+  .tile svg { width: 21px; height: 21px; }
+  .card-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+  .card-meta {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  .tag.on { background: var(--card-deep); font-weight: 700; }
+  .card p { margin: 14px 0 0; font-size: 14px; color: var(--ink-soft); }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-top: 18px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- two-track flow ---------- */
+  .legend { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 26px; }
+  .key { display: flex; align-items: center; gap: 9px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+  .swatch { width: 14px; height: 14px; border-radius: 4px; }
+  .swatch.seeker { background: var(--amber); }
+  .swatch.vendor { background: var(--steel); }
+
+  .track {
+    display: grid;
+    grid-template-columns: 1fr 132px 1fr;
+    align-items: stretch;
+  }
+  .lane { display: flex; flex-direction: column; gap: 14px; }
+  .lane.vendor { padding-top: 76px; }
+
+  .rail { position: relative; }
+  .rail::before {
+    content: "";
+    position: absolute;
+    left: 50%; top: 8px; bottom: 8px;
+    width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(var(--amber), var(--steel));
+    opacity: 0.5;
+  }
+
+  .step {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 15px 17px;
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+  }
+  .step .n {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding-top: 2px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .step h4 { margin: 0; font-size: 14.5px; font-weight: 700; letter-spacing: -0.005em; }
+  .step p { margin: 5px 0 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  .lane.seeker .step { border-left: 3px solid var(--amber); }
+  .lane.vendor .step { border-left: 3px solid var(--steel); }
+
+  .meet {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 20px 0;
+    padding: 13px 18px;
+    border-radius: 999px;
+    background: var(--navy);
+    color: var(--paper);
+  }
+  .meet svg { width: 17px; height: 17px; flex: none; }
+  .meet b { font-size: 13px; letter-spacing: 0.09em; text-transform: uppercase; }
+  .meet span { font-size: 13px; opacity: 0.78; }
+
+  @media (max-width: 900px) {
+    .track { grid-template-columns: 1fr; }
+    .rail { display: none; }
+    .lane.vendor { padding-top: 14px; }
+    .lane { gap: 12px; }
+    .lane + .lane { margin-top: 12px; }
+    .meet { margin: 18px 0; border-radius: 14px; }
+  }
+  @media (max-width: 560px) {
+    .meet { flex-wrap: wrap; gap: 6px 12px; }
+  }
+
+  /* ---------- split value ---------- */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(18px, 3vw, 32px); }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  .panel {
+    border: 1px solid var(--rule);
+    border-radius: 22px;
+    padding: clamp(22px, 3vw, 32px);
+    background: var(--card);
+  }
+  .panel h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.01em; }
+  .panel .who {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px;
+  }
+  .panel ul { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 13px; }
+  .panel li { display: flex; gap: 11px; font-size: 14.5px; color: var(--ink-soft); }
+  .panel li svg { width: 17px; height: 17px; flex: none; margin-top: 3px; color: var(--amber); }
+  .panel.vendor li svg { color: var(--steel); }
+
+  /* ---------- close ---------- */
+  .close { border-top: 1px solid var(--rule); }
+  .close h2 { font-size: clamp(26px, 4.4vw, 44px); font-weight: 800; letter-spacing: -0.025em; max-width: 18ch; }
+  .close h2 em { font-style: italic; color: var(--amber); }
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-block: 30px 44px;
+    display: flex; flex-wrap: wrap; gap: 14px 28px;
+    align-items: center; justify-content: space-between;
+    font-size: 12.5px; color: var(--ink-faint);
+  }
+
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
 </head>
 <body>
-  <img class="logo" src="assets/logo.png" alt="MoonJTech">
-  <p class="tagline">Something big is coming<span class="dots"><span>.</span><span>.</span><span>.</span></span></p>
-  <p class="footer">&copy; 2026 MoonJTech</p>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="mark">Aid<i>Vise</i><span class="mark-tag">Hack the Hustle</span></div>
+    <nav>
+      <a href="#personal">Personalisation</a>
+      <a href="#flow">The flow</a>
+      <a href="#both">For both sides</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>One hire, <em>two</em> sides, one thread.</h1>
+    <p>
+      AidVise works out what a person is actually suited to, writes them a resume for
+      the specific role they are applying to, and hands the employer scored candidates
+      instead of a folder of PDFs. Both sides follow the same application from first
+      question to first day.
+    </p>
+    <div class="cta-row">
+      <a class="btn" href="#flow">See the full flow</a>
+      <a class="btn ghost" href="#both">What each side gets</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>15&nbsp;min</b><span>Interest assessment</span></div>
+      <div class="stat"><b>6</b><span>Interest dimensions scored</span></div>
+      <div class="stat"><b>3</b><span>Career paths matched</span></div>
+      <div class="stat"><b>1</b><span>Resume per listing, tailored</span></div>
+    </div>
+  </section>
+
+  <section id="personal">
+    <div class="section-head reveal">
+      <p class="eyebrow">Personalisation</p>
+      <h2>It starts by learning what the work should feel like.</h2>
+      <p>
+        The assessment scores six interest dimensions and matches them against the
+        interest profile of real career families. The result is not a job title guess —
+        it is a ranked explanation the candidate can read, question, and act on.
+      </p>
+    </div>
+
+    <div class="samples">
+      <article class="card reveal">
+        <div class="card-head">
+          <div class="card-title">1. Engineering &amp; Industrial</div>
+          <div class="card-meta">86%</div>
+        </div>
+        <div class="tags">
+          <span class="tag on">Realistic</span>
+          <span class="tag on">Investigative</span>
+          <span class="tag">Conventional</span>
+        </div>
+        <p>Designing, operating and maintaining physical systems, infrastructure and industrial processes.</p>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <div class="tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+          </div>
+          <div class="card-title">Resume Generator</div>
+        </div>
+        <p>Written against the listing it is for — the wording follows the role, not a template.</p>
+        <span class="chip">4 Resumes &middot; 11 Tailored</span>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-head">
+          <div class="tile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="card-title">Browse Jobs</div>
+        </div>
+        <p>Openings ranked against the candidate's matched fields, not an untargeted feed.</p>
+        <span class="chip">8 in Marketing &amp; Growth</span>
+      </article>
+    </div>
+  </section>
+
+  <section id="flow">
+    <div class="section-head reveal">
+      <p class="eyebrow">The flow</p>
+      <h2>From a job listing to a first day — seen from both sides.</h2>
+      <p>
+        The candidate and the employer each have their own sequence. Four moments are
+        shared: the two tracks meet, and the same application carries the state forward.
+      </p>
+    </div>
+
+    <div class="legend reveal">
+      <span class="key"><span class="swatch seeker"></span>Job seeker</span>
+      <span class="key"><span class="swatch vendor"></span>Employer</span>
+    </div>
+
+    <div class="track">
+      <div class="lane seeker">
+        <div class="step reveal"><span class="n">01</span><div><h4>Take the assessment</h4><p>Fifteen minutes of questions about the work itself, not job titles.</p></div></div>
+        <div class="step reveal"><span class="n">02</span><div><h4>Read the matched paths</h4><p>Three career families, ranked, each with the reasoning behind it.</p></div></div>
+        <div class="step reveal"><span class="n">03</span><div><h4>Browse matched openings</h4><p>Live listings inside those fields, with the skills each one asks for.</p></div></div>
+        <div class="step reveal"><span class="n">04</span><div><h4>Generate a tailored resume</h4><p>Written for that listing and kept, so the next application starts ahead.</p></div></div>
+      </div>
+
+      <div class="rail" aria-hidden="true"></div>
+
+      <div class="lane vendor">
+        <div class="step reveal"><span class="n">01</span><div><h4>Post the listing</h4><p>Role, career family, required skills, salary and location.</p></div></div>
+        <div class="step reveal"><span class="n">02</span><div><h4>Attach screening questions</h4><p>Asked automatically, answered before the first conversation.</p></div></div>
+        <div class="step reveal"><span class="n">03</span><div><h4>Attach the prep pack</h4><p>Directions, timing, instructions — released when an interview is set.</p></div></div>
+      </div>
+
+      <div class="meet reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12h10M13 8l4 4-4 4"/><circle cx="12" cy="12" r="10"/></svg>
+        <b>Application submitted</b>
+        <span>The candidate applies with the tailored resume. The employer receives it scored on skills, experience, interest fit and written answers.</span>
+      </div>
+
+      <div class="lane seeker">
+        <div class="step reveal"><span class="n">05</span><div><h4>Answer the screening</h4><p>In the app, at their own pace, before anyone schedules anything.</p></div></div>
+      </div>
+      <div class="rail" aria-hidden="true"></div>
+      <div class="lane vendor">
+        <div class="step reveal"><span class="n">04</span><div><h4>Review the shortlist</h4><p>Sorted by score, filtered by component. Opening a resume marks it reviewed — no manual bookkeeping.</p></div></div>
+      </div>
+
+      <div class="meet reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg>
+        <b>Interview scheduled</b>
+        <span>The prep pack unlocks for the candidate. If the time does not work, they propose another and the employer answers in the same thread.</span>
+      </div>
+
+      <div class="lane seeker">
+        <div class="step reveal"><span class="n">06</span><div><h4>Prepare properly</h4><p>Location, time, instructions and the questions the company expects to ask.</p></div></div>
+      </div>
+      <div class="rail" aria-hidden="true"></div>
+      <div class="lane vendor">
+        <div class="step reveal"><span class="n">05</span><div><h4>Decide</h4><p>Move the application forward or close it. Either way the candidate is told.</p></div></div>
+      </div>
+
+      <div class="meet reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+        <b>Hired</b>
+        <span>The application closes on both sides, and the candidate keeps every resume and result they built along the way.</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="both">
+    <div class="section-head reveal">
+      <p class="eyebrow">For both sides</p>
+      <h2>Neither side is doing the other's work.</h2>
+    </div>
+
+    <div class="split">
+      <div class="panel reveal">
+        <p class="who">Job seeker</p>
+        <h3>Applications that argue their own case.</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg><span>A ranked, explained view of which fields fit, and why.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg><span>A resume written for each listing, kept and reusable.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg><span>Every application's real status, not silence after submitting.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg><span>Interview details and prep material from the company itself.</span></li>
+        </ul>
+      </div>
+
+      <div class="panel vendor reveal">
+        <p class="who">Employer</p>
+        <h3>A shortlist instead of an inbox.</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg><span>Applicants scored on skills, experience, fit and written answers.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg><span>Screening answered before the first call, not during it.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg><span>Listings shown to candidates whose interests match the field.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg><span>Review state recorded from what you actually did.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="close">
+    <h2 class="reveal">Built for the people who are <em>still figuring it out</em>.</h2>
+    <div class="cta-row reveal">
+      <a class="btn" href="#personal">Start with the assessment</a>
+      <a class="btn ghost" href="#both">Hire through AidVise</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="mark" style="font-size:19px">Aid<i>Vise</i></div>
+    <div>Alpha 1.0 &middot; A MoonJTech product</div>
+  </footer>
+</div>
+
+<script>
+  const seen = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in");
+        seen.unobserve(entry.target);
+      }
+    }
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+
+  document.querySelectorAll(".reveal").forEach((el, i) => {
+    el.style.transitionDelay = Math.min(i % 4, 3) * 60 + "ms";
+    seen.observe(el);
+  });
+</script>
 </body>
 </html>
