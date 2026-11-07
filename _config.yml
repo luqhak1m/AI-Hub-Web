@@ -1,0 +1,6 @@
+# GitHub Pages publishes this repository root as moonjtech.com.
+# The platform app is built and hosted separately, so its source stays out
+# of the public site.
+exclude:
+  - platform/
+  - README.md
