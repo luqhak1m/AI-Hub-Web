@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
+import 'package:aidvise_platform/shared/screens/register_screen.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/shared/widgets/aidvise_wordmark.dart';
 import 'package:aidvise_platform/shared/utils/app_page_route.dart';
 
 class LoginScreen extends StatefulWidget {
-  /// Where a successful login goes. Each area of the platform (admin now;
-  /// job seeker and employer later) supplies its own entry gate.
+  /// Where a successful login goes: the platform's gate, which picks the
+  /// admin, employer or job seeker area by account type.
   final WidgetBuilder destination;
 
   const LoginScreen({super.key, required this.destination});
@@ -194,6 +195,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Don't have an account? ",
+                        style: TextStyle(color: Color(0xFF888888)),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                          AppPageRoute(builder: (_) => const RegisterScreen()),
+                        ),
+                        child: const Text(
+                          'Register',
+                          style: TextStyle(
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

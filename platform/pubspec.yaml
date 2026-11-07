@@ -1,16 +1,23 @@
 name: aidvise_platform
-description: "AidVise web platform: admin panel now; job seeker and employer areas later."
+description: "AidVise web platform: job seekers, employers and administrators."
 publish_to: 'none'
-version: 3.4.0+1
+version: 3.5.0+2
 
 environment:
-  sdk: ^3.11.5
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   http: ^1.2.1
   flutter_secure_storage: ^9.2.2
+  flutter_markdown_plus: ^1.0.7
+  file_saver: ^0.2.14
+  file_picker: ^11.0.2
+  url_launcher: ^6.3.2
+  flutter_map: ^8.3.1
+  latlong2: ^0.10.1
+  web: ^1.1.0
 
 dev_dependencies:
   flutter_test:
