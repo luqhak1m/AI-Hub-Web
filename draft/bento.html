@@ -1,0 +1,343 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bento grid · AidVise draft</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap"><style>/* Layout concept: one gallery, six browser-framed mockups of the AidVise web app,
+   each the same product and data arranged a different way. Brand kept from the app:
+   navy primary, amber accent, steel-blue sidebar. */
+:root {
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --surface-2: #e6ecf2;
+  --surface-3: #dbe3eb;
+  --line: #d3dce5;
+  --ink: #0b2239;
+  --muted: #566a7e;
+  --brand: #013a63;          /* navy: text accents, links */
+  --brand-fill: #013a63;     /* navy: filled surfaces */
+  --on-brand: #ffffff;
+  --steel: #457b9d;          /* the app's sidebar blue */
+  --accent: #ffb703;         /* amber */
+  --on-accent: #1c1400;
+  --good: #1f8a70;
+  --warn: #c77700;
+  --bad: #d62839;
+  --good-soft: #dcf2ea;
+  --warn-soft: #fdf0d5;
+  --bad-soft: #fbe1e4;
+  --brand-soft: #dde9f3;
+  --shadow: 0 1px 2px rgba(1, 58, 99, .06), 0 8px 24px rgba(1, 58, 99, .08);
+
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --step--1: .78rem;
+  --step-0: .9rem;
+  --step-1: 1.05rem;
+  --step-2: 1.3rem;
+  --step-3: 1.75rem;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #08141f; --surface: #0f2131; --surface-2: #152c41; --surface-3: #1c3850; --line: #23415c;
+    --ink: #e4edf5; --muted: #92a7bb; --brand: #8cc4ec; --brand-fill: #1a5d92; --on-brand: #ffffff;
+    --steel: #2e5f80; --accent: #ffc23d; --on-accent: #1c1400;
+    --good: #4cc9a4; --warn: #f0a83a; --bad: #ff6b7a;
+    --good-soft: #12382f; --warn-soft: #3a2c10; --bad-soft: #3d1a20; --brand-soft: #16334d;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #08141f; --surface: #0f2131; --surface-2: #152c41; --surface-3: #1c3850; --line: #23415c;
+  --ink: #e4edf5; --muted: #92a7bb; --brand: #8cc4ec; --brand-fill: #1a5d92; --on-brand: #ffffff;
+  --steel: #2e5f80; --accent: #ffc23d; --on-accent: #1c1400;
+  --good: #4cc9a4; --warn: #f0a83a; --bad: #ff6b7a;
+  --good-soft: #12382f; --warn-soft: #3a2c10; --bad-soft: #3d1a20; --brand-soft: #16334d;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.5;
+}
+.page { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; }
+h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.eyebrow { font-size: var(--step--1); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+
+/* ── Gallery chrome ─────────────────────────────────────────── */
+.intro { display: grid; gap: 10px; max-width: 70ch; margin-bottom: 22px; }
+.intro h1 { font-size: clamp(1.6rem, 3vw, 2.3rem); color: var(--brand); }
+.intro p { color: var(--muted); font-size: var(--step-1); }
+.switcher { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.switcher button {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 999px;
+  padding: 8px 14px; cursor: pointer; display: inline-flex; gap: 8px; align-items: baseline;
+}
+.switcher button span { color: var(--muted); font-size: var(--step--1); }
+.switcher button[aria-pressed="true"] { background: var(--brand-fill); border-color: var(--brand-fill); color: var(--on-brand); }
+.switcher button[aria-pressed="true"] span { color: var(--on-brand); opacity: .75; }
+.draft { display: grid; gap: 16px; }
+.draft-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; align-items: end; }
+.draft-head h2 { font-size: var(--step-3); }
+.draft-head p { color: var(--muted); max-width: 62ch; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.note { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; }
+.note h4 { font-size: var(--step-0); font-family: var(--font-body); font-weight: 700; }
+.note ul { margin: 0; padding-left: 18px; color: var(--muted); display: grid; gap: 4px; }
+
+/* browser frame around each mockup */
+.frame { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+.frame-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--surface-3); display: block; }
+.url { flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; color: var(--muted); font-size: var(--step--1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.screen { background: var(--bg); min-height: 560px; container-type: inline-size; }
+
+/* ── Shared app pieces ──────────────────────────────────────── */
+.wordmark { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -.02em; color: var(--brand); }
+.wordmark b { color: var(--accent); font-weight: 800; }
+.on-dark .wordmark { color: #fff; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: var(--step--1); font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.brand { background: var(--brand-soft); color: var(--brand); }
+.pill.plain { background: var(--surface-2); color: var(--muted); }
+.chip { font-size: var(--step--1); padding: 3px 9px; border-radius: 8px; background: var(--surface-2); color: var(--ink); white-space: nowrap; }
+.btn { border: 0; border-radius: 10px; padding: 9px 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn.primary { background: var(--brand-fill); color: var(--on-brand); }
+.btn.accent { background: var(--accent); color: var(--on-accent); }
+.btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--brand); }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-weight: 700; font-size: .8rem; flex: none; }
+.logo { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; font-family: var(--font-display); color: #fff; flex: none; font-size: .9rem; }
+.logo.l1 { background: #013a63; } .logo.l2 { background: #b5179e; } .logo.l3 { background: #2a9d8f; }
+.logo.l4 { background: #8d5524; } .logo.l5 { background: #6a4c93; }
+.match { font-weight: 700; color: var(--good); font-variant-numeric: tabular-nums; }
+.meta { color: var(--muted); font-size: var(--step--1); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.topnav { display: flex; align-items: center; gap: 22px; padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topnav nav { display: flex; gap: 4px; flex: 1; min-width: 0; overflow-x: auto; }
+.topnav nav a { padding: 6px 12px; border-radius: 8px; color: var(--muted); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.topnav nav a.on { background: var(--brand-soft); color: var(--brand); }
+.icon { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── A. Sidebar dashboard ───────────────────────────────────── */
+.a-wrap { display: grid; grid-template-columns: 220px 1fr; min-height: 560px; }
+.a-side { background: var(--steel); color: #fff; padding: 20px 14px; display: grid; align-content: start; gap: 22px; }
+.a-side nav { display: grid; gap: 2px; }
+.a-side nav a { display: flex; gap: 10px; align-items: center; padding: 9px 12px; border-radius: 10px; color: rgba(255,255,255,.82); text-decoration: none; font-weight: 500; }
+.a-side nav a.on { background: rgba(255,255,255,.16); color: #fff; font-weight: 700; }
+.a-side .badge { margin-left: auto; background: var(--accent); color: var(--on-accent); font-size: .7rem; font-weight: 700; border-radius: 999px; padding: 1px 7px; }
+.a-main { padding: 24px; display: grid; gap: 20px; align-content: start; min-width: 0; }
+.a-greet { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.a-greet h3 { font-size: var(--step-3); }
+.a-remind { background: linear-gradient(120deg, #0d5a8f, #013a63); color: #fff; border-radius: var(--radius); padding: 18px 20px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.a-remind p { opacity: .85; }
+.a-tools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.a-tool { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 14px; }
+.a-tool .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--surface-2); color: var(--warn); display: grid; place-items: center; }
+.a-tool h4 { font-size: var(--step-0); text-transform: uppercase; letter-spacing: .06em; font-family: var(--font-body); font-weight: 800; color: var(--brand); }
+.a-jobs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.a-job { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; }
+.a-job .top { display: flex; gap: 12px; align-items: center; }
+.a-job h4 { font-size: var(--step-1); font-family: var(--font-body); font-weight: 700; }
+.a-job .foot { display: flex; justify-content: space-between; align-items: center; }
+.section-title { display: flex; justify-content: space-between; align-items: baseline; }
+.section-title h3 { font-size: var(--step-2); }
+.section-title a { color: var(--brand); font-weight: 600; text-decoration: none; font-size: var(--step--1); }
+
+/* ── B. Three-column feed ───────────────────────────────────── */
+.b-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr) 270px; gap: 18px; padding: 20px; align-items: start; }
+.b-profile { padding: 18px; display: grid; gap: 14px; }
+.b-profile .who { display: flex; gap: 12px; align-items: center; }
+.b-profile .avatar { width: 48px; height: 48px; font-size: 1rem; }
+.bar { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--brand-fill); border-radius: 99px; }
+.bar.amber i { background: var(--accent); }
+.b-quota { display: grid; gap: 10px; }
+.b-quota div { display: grid; gap: 5px; }
+.b-quota .row { display: flex; justify-content: space-between; font-size: var(--step--1); }
+.b-feed { display: grid; gap: 10px; }
+.b-compose { padding: 12px 14px; display: flex; gap: 10px; align-items: center; color: var(--muted); }
+.b-compose .search { flex: 1; background: var(--surface-2); border-radius: 10px; padding: 9px 12px; }
+.b-item { padding: 16px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: start; }
+.b-item h4 { font-size: var(--step-1); font-family: var(--font-body); font-weight: 700; }
+.b-item .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.b-item .side { display: grid; justify-items: end; gap: 8px; }
+.b-rail { display: grid; gap: 14px; }
+.b-card { padding: 16px; display: grid; gap: 12px; }
+.b-interview { background: var(--brand-fill); color: var(--on-brand); border: 0; }
+.b-interview .meta { color: rgba(255,255,255,.75); }
+.b-steps { display: grid; gap: 8px; }
+.b-steps div { display: flex; justify-content: space-between; align-items: center; }
+
+/* ── C. Master–detail ───────────────────────────────────────── */
+.c-wrap { display: grid; grid-template-columns: 360px minmax(0, 1fr); min-height: 520px; }
+.c-list { border-right: 1px solid var(--line); background: var(--surface); display: grid; align-content: start; }
+.c-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.c-filters .chip.on { background: var(--brand-fill); color: var(--on-brand); }
+.c-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); align-items: center; cursor: pointer; }
+.c-row.on { background: var(--brand-soft); box-shadow: inset 3px 0 0 var(--brand-fill); }
+.c-row h4 { font-size: var(--step-0); font-family: var(--font-body); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.c-detail { padding: 26px; display: grid; gap: 20px; align-content: start; min-width: 0; }
+.c-detail .head { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.c-detail .head .logo { width: 56px; height: 56px; font-size: 1.1rem; border-radius: 14px; }
+.c-detail h3 { font-size: var(--step-3); }
+.c-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.c-facts div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 2px; }
+.c-facts strong { font-size: var(--step-1); }
+.c-score { display: grid; gap: 10px; }
+.c-score .line { display: grid; grid-template-columns: 130px minmax(0, 1fr) 64px; gap: 12px; align-items: center; font-size: var(--step--1); }
+.c-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ── D. Bento ───────────────────────────────────────────────── */
+.d-wrap { padding: 20px; display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(130px, auto); }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.t-riasec { grid-column: span 2; grid-row: span 2; }
+.t-interview { grid-column: span 2; background: var(--brand-fill); color: var(--on-brand); border: 0; }
+.t-interview .meta { color: rgba(255,255,255,.75); }
+.t-match { grid-column: span 2; }
+.t-actions { grid-column: span 4; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.riasec { display: grid; gap: 10px; margin-top: 4px; }
+.riasec .line { display: grid; grid-template-columns: 110px minmax(0, 1fr) 42px; gap: 10px; align-items: center; font-size: var(--step--1); }
+.riasec .line.top { font-weight: 700; }
+.ring { --p: 60; width: 92px; height: 92px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--surface-2) 0); display: grid; place-items: center; }
+.ring span { width: 70px; height: 70px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-weight: 800; font-family: var(--font-display); font-size: 1.1rem; }
+.big { font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; line-height: 1; }
+
+/* ── E. Pipeline ────────────────────────────────────────────── */
+.e-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 20px 0; flex-wrap: wrap; }
+.e-head h3 { font-size: var(--step-2); }
+.e-board { display: grid; grid-template-columns: repeat(5, minmax(190px, 1fr)); gap: 12px; padding: 16px 20px 20px; overflow-x: auto; }
+.e-col { background: var(--surface-2); border-radius: 14px; padding: 10px; display: grid; gap: 8px; align-content: start; min-height: 380px; }
+.e-col > header { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px 6px; font-weight: 700; font-size: var(--step--1); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.e-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+.e-card h4 { font-size: var(--step-0); font-family: var(--font-body); font-weight: 700; }
+.e-card .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.e-card.hot { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+/* ── F. Table ───────────────────────────────────────────────── */
+.f-wrap { padding: 20px; display: grid; gap: 14px; }
+.f-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+.f-head h3 { font-size: var(--step-2); }
+.f-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.f-tools .search { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; color: var(--muted); min-width: 0; width: 220px; max-width: 100%; }
+.f-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.f-stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; }
+.f-stats strong { font-family: var(--font-display); font-size: var(--step-2); }
+.table-scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+table { width: 100%; border-collapse: collapse; min-width: 720px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-size: var(--step--1); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; background: var(--surface-2); }
+tr:last-child td { border-bottom: 0; }
+td .who { display: flex; gap: 10px; align-items: center; }
+.score { display: flex; align-items: center; gap: 8px; }
+.score .bar { width: 70px; }
+
+/* ── Narrow screens: every layout collapses to one column ─── */
+@container (max-width: 860px) {
+  .a-wrap { grid-template-columns: 1fr; }
+  .a-side { grid-auto-flow: column; overflow-x: auto; align-items: center; padding: 12px 14px; }
+  .a-side nav { grid-auto-flow: column; }
+  .a-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .a-jobs { grid-template-columns: 1fr; }
+  .b-wrap { grid-template-columns: 1fr; }
+  .c-wrap { grid-template-columns: 1fr; }
+  .c-list { border-right: 0; }
+  .c-facts { grid-template-columns: 1fr; }
+  .d-wrap { grid-template-columns: 1fr 1fr; }
+  .t-riasec, .t-interview, .t-match, .t-actions { grid-column: span 2; }
+  .f-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (max-width: 520px) {
+  .a-tools { grid-template-columns: 1fr; }
+  .d-wrap { grid-template-columns: 1fr; }
+  .tile, .t-riasec, .t-interview, .t-match, .t-actions { grid-column: span 1; grid-row: auto; }
+  .b-item { grid-template-columns: auto minmax(0, 1fr); }
+  .b-item .side { grid-column: 1 / -1; justify-items: start; grid-auto-flow: column; }
+  .c-score .line { grid-template-columns: 1fr 50px; }
+  .c-score .line .bar { grid-column: 1 / -1; grid-row: 2; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ── Multi-page mockups ─────────────────────────────────────── */
+.hint { color: var(--muted); font-size: var(--step--1); }
+.content-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+.content-head h3 { font-size: var(--step-3); }
+.stats { display: flex; flex-wrap: wrap; gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; display: grid; gap: 0; min-width: 120px; }
+.stat strong { font-family: var(--font-display); font-size: var(--step-2); font-variant-numeric: tabular-nums; }
+.ico-tile { width: 40px; height: 40px; border-radius: 10px; background: var(--surface-2); color: var(--warn); display: grid; place-items: center; flex: none; }
+.unread { position: relative; }
+.unread::after { content: ""; position: absolute; top: 14px; right: 14px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.g-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.g-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; align-content: start; }
+.g-card .top { display: flex; gap: 12px; align-items: center; }
+.g-card h4 { font-size: var(--step-1); font-family: var(--font-body); font-weight: 700; }
+.g-card .foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.body { color: var(--muted); }
+.d-hero { grid-column: span 2; grid-row: span 2; }
+.d-wide { grid-column: span 2; }
+.topnav nav a, .a-side nav a { cursor: pointer; }
+@container (max-width: 860px) {
+  .g-grid { grid-template-columns: 1fr; }
+  .d-hero, .d-wide { grid-column: span 2; }
+}
+@container (max-width: 520px) {
+  .d-hero, .d-wide { grid-column: span 1; grid-row: auto; }
+}
+
+/* ── Mixed draft: other layouts inside the sidebar shell ────── */
+.a-main > .c-wrap { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; min-height: 0; background: var(--surface); }
+.a-main > .c-wrap .c-detail { background: var(--bg); }
+.a-main .e-head, .a-main .e-board { padding-left: 0; padding-right: 0; }
+.a-main .e-head { padding-top: 0; }
+.a-main .f-wrap { padding: 0; }
+</style></head><body><main class="page"><p class="eyebrow"><a href="index.html" style="color:inherit">All drafts</a></p><section class="draft" id="bento" aria-labelledby="h-bento"><div class="draft-head"><div><p class="eyebrow">mixed-size tiles</p><h2 id="h-bento">Bento grid</h2></div><p>Tiles of different sizes, each one fact. The biggest tile is the most important thing on the page. <span class="hint">Use the menu inside the mockup to open all seven pages.</span></p></div><div class="frame"><div class="frame-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">app.moonjtech.com/home</div></div><div class="screen"><div class="view" data-view="home" data-url="app.moonjtech.com/home"><div class="topnav"><div class="wordmark">Aid<b>Vise</b></div><nav><a data-goto="home" class="on">Home</a><a data-goto="jobs" class="">Jobs</a><a data-goto="applications" class="">Applications</a><a data-goto="resumes" class="">Resumes</a><a data-goto="assessment" class="">Assessment</a><a data-goto="notifications" class="">Notifications</a><a data-goto="employer" class="">Employer view</a></nav><div class="avatar">AR</div></div><div class="d-wrap">
+  <div class="tile t-riasec"><p class="eyebrow">Your interest profile</p><h3 style="font-size:var(--step-3)">E · S · A</h3>
+    <p class="meta">Persuading, helping and creating. Roles like marketing, sales and events suit you.</p><div class="riasec"><div class="line top"><span>Enterprising</span><div class="bar amber"><i style="width:86%"></i></div><span class="num" style="text-align:right">86%</span></div><div class="line top"><span>Social</span><div class="bar amber"><i style="width:74%"></i></div><span class="num" style="text-align:right">74%</span></div><div class="line top"><span>Artistic</span><div class="bar amber"><i style="width:61%"></i></div><span class="num" style="text-align:right">61%</span></div><div class="line "><span>Investigative</span><div class="bar "><i style="width:42%"></i></div><span class="num" style="text-align:right">42%</span></div><div class="line "><span>Conventional</span><div class="bar "><i style="width:35%"></i></div><span class="num" style="text-align:right">35%</span></div><div class="line "><span>Realistic</span><div class="bar "><i style="width:18%"></i></div><span class="num" style="text-align:right">18%</span></div></div></div>
+  <div class="tile t-interview"><p class="eyebrow" style="color:inherit;opacity:.75">Next interview</p>
+    <div class="big">Thu 13 Nov</div><p class="meta">10:00 AM · Acme Sdn Bhd · Video call</p></div>
+  <div class="tile"><p class="eyebrow">Resumes left</p><div class="ring" style="--p:60"><span class="num">3/5</span></div><p class="meta">Resets 1 Dec</p></div>
+  <div class="tile"><p class="eyebrow">Profile</p><div class="big num">80%</div><div class="bar"><i style="width:80%"></i></div><p class="meta">Add one certification to finish</p></div>
+  <div class="tile t-match"><p class="eyebrow">Top match today</p><div style="display:flex;gap:12px;align-items:center">
+    <div class="logo l1">AC</div><div style="min-width:0"><strong>Digital Marketing Executive</strong><p class="meta">Acme Sdn Bhd · RM 4,000 – 6,000</p></div>
+    <span class="match" style="margin-left:auto">92%</span></div></div>
+  <div class="tile t-actions"><strong style="margin-right:auto">Quick actions</strong><button class="btn primary">Generate resume</button>
+    <button class="btn ghost">Ask the advisor</button><a data-goto="jobs" class="btn ghost" style="text-decoration:none">Browse 24 matches</a></div>
+</div></div><div class="view" data-view="jobs" data-url="app.moonjtech.com/jobs" hidden><div class="topnav"><div class="wordmark">Aid<b>Vise</b></div><nav><a data-goto="home" class="">Home</a><a data-goto="jobs" class="on">Jobs</a><a data-goto="applications" class="">Applications</a><a data-goto="resumes" class="">Resumes</a><a data-goto="assessment" class="">Assessment</a><a data-goto="notifications" class="">Notifications</a><a data-goto="employer" class="">Employer view</a></nav><div class="avatar">AR</div></div><div class="d-wrap"><div class="tile d-hero"><div class="logo l1">AC</div><p class="eyebrow">Jobs for you</p><h3 style="font-size:var(--step-3)">Digital Marketing Executive</h3><p class="meta">Acme Sdn Bhd · Kuala Lumpur</p><p class=body>Plan and run paid campaigns, report weekly on spend and conversions, and work with the content team on launches.</p><div class="chips"><span class=chip>Meta Ads</span><span class=chip>SEO</span><span class=chip>Google Analytics</span></div><div style="display:flex;gap:10px;align-items:center;margin-top:6px"><span class="match">92%</span><button class="btn primary">Search jobs</button></div></div><div class="tile"><p class="eyebrow">Matches</p><div class="big num">24</div></div><div class="tile"><p class="eyebrow">New today</p><div class="big num">3</div></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l2">BB</div><span class="match">88%</span></div><strong>Social Media Strategist</strong><p class="meta">BytesnBrand · Petaling Jaya</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l3">MJ</div><span class="match">81%</span></div><strong>Brand Partnerships Lead</strong><p class="meta">MoonJTech · Cyberjaya</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l4">KS</div><span class="match">77%</span></div><strong>Content Producer</strong><p class="meta">Kopi Studio · Remote (MY)</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l5">LE</div><span class="match">74%</span></div><strong>Events Marketing Coordinator</strong><p class="meta">Lumiere Events · Penang</p></div><div class="tile t-actions"><strong style="margin-right:auto">24 matches for Marketing, ranked by fit</strong><span class="pill plain">New today</span><span class="pill plain">This week</span><span class="pill plain">Saved</span></div></div></div><div class="view" data-view="applications" data-url="app.moonjtech.com/applications" hidden><div class="topnav"><div class="wordmark">Aid<b>Vise</b></div><nav><a data-goto="home" class="">Home</a><a data-goto="jobs" class="">Jobs</a><a data-goto="applications" class="on">Applications</a><a data-goto="resumes" class="">Resumes</a><a data-goto="assessment" class="">Assessment</a><a data-goto="notifications" class="">Notifications</a><a data-goto="employer" class="">Employer view</a></nav><div class="avatar">AR</div></div><div class="d-wrap"><div class="tile d-hero"><div class="logo l4">KS</div><p class="eyebrow">My applications</p><h3 style="font-size:var(--step-3)">Content Producer</h3><p class="meta">Kopi Studio</p><p class=body>Applied 6h ago</p><div style="display:flex;gap:10px;align-items:center;margin-top:6px"><span class="pill plain">Submitted</span><button class="btn primary">Find more jobs</button></div></div><div class="tile"><p class="eyebrow">Active</p><div class="big num">5</div></div><div class="tile"><p class="eyebrow">Interviews</p><div class="big num">1</div></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l5">LE</div><span class="pill plain">Submitted</span></div><strong>Events Marketing Coordinator</strong><p class="meta">Lumiere Events</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l2">BB</div><span class="pill brand">Reviewed</span></div><strong>Social Media Strategist</strong><p class="meta">BytesnBrand</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l3">MJ</div><span class="pill warn">Shortlisted</span></div><strong>Brand Partnerships Lead</strong><p class="meta">MoonJTech</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l1">AC</div><span class="pill good">Interview</span></div><strong>Digital Marketing Executive</strong><p class="meta">Acme Sdn Bhd</p></div><div class="tile t-actions"><strong style="margin-right:auto">5 active · 1 needs your action</strong><span class="pill plain">Submitted</span><span class="pill plain">Reviewed</span><span class="pill plain">Shortlisted</span><span class="pill plain">Interview</span><span class="pill plain">Hired</span></div></div></div><div class="view" data-view="resumes" data-url="app.moonjtech.com/resumes" hidden><div class="topnav"><div class="wordmark">Aid<b>Vise</b></div><nav><a data-goto="home" class="">Home</a><a data-goto="jobs" class="">Jobs</a><a data-goto="applications" class="">Applications</a><a data-goto="resumes" class="on">Resumes</a><a data-goto="assessment" class="">Assessment</a><a data-goto="notifications" class="">Notifications</a><a data-goto="employer" class="">Employer view</a></nav><div class="avatar">AR</div></div><div class="d-wrap"><div class="tile d-hero"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></div><p class="eyebrow">Resumes</p><h3 style="font-size:var(--step-3)">Digital Marketing Executive</h3><p class="meta">Acme Sdn Bhd · Modern Bullet</p><p class=body>Rewritten around the skills this employer asked for, in an ATS-friendly layout.</p><div style="display:flex;gap:10px;align-items:center;margin-top:6px"><span class="pill brand">Tailored</span><button class="btn primary">Generate resume</button></div></div><div class="tile"><p class="eyebrow">Resumes</p><div class="big num">4</div></div><div class="tile"><p class="eyebrow">Left this month</p><div class="big num">2</div></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></div><span class="pill brand">Tailored</span></div><strong>Brand Partnerships Lead</strong><p class="meta">MoonJTech · Modern Bullet</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></div><span class="pill brand">Tailored</span></div><strong>Social Media Strategist</strong><p class="meta">BytesnBrand · Senior Professional</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></div><span class="pill plain">General</span></div><strong>General marketing resume</strong><p class="meta">No job selected · Junior Classic</p></div><div class="tile t-actions"><strong style="margin-right:auto">3 of 5 generations used this month · resets 1 Dec</strong><span class="pill plain">Tailored</span><span class="pill plain">General</span></div></div></div><div class="view" data-view="assessment" data-url="app.moonjtech.com/assessment" hidden><div class="topnav"><div class="wordmark">Aid<b>Vise</b></div><nav><a data-goto="home" class="">Home</a><a data-goto="jobs" class="">Jobs</a><a data-goto="applications" class="">Applications</a><a data-goto="resumes" class="">Resumes</a><a data-goto="assessment" class="on">Assessment</a><a data-goto="notifications" class="">Notifications</a><a data-goto="employer" class="">Employer view</a></nav><div class="avatar">AR</div></div><div class="d-wrap"><div class="tile d-hero"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div><p class="eyebrow">Your interest profile: E · S · A</p><h3 style="font-size:var(--step-3)">Marketing Managers</h3><p class="meta">O*NET 11-2021.00</p><p class=body>Plan programs that drive demand for products and services.</p><div class="chips"><span class=chip>Enterprising</span><span class=chip>Social</span></div><div style="display:flex;gap:10px;align-items:center;margin-top:6px"><span class="match">94%</span><button class="btn primary">Ask the advisor</button></div></div><div class="tile"><p class="eyebrow">Enterprising</p><div class="big num">86%</div></div><div class="tile"><p class="eyebrow">Social</p><div class="big num">74%</div></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div><span class="match">91%</span></div><strong>Advertising and Promotions Managers</strong><p class="meta">O*NET 11-2011.00</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div><span class="match">87%</span></div><strong>Public Relations Specialists</strong><p class="meta">O*NET 27-3031.00</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div><span class="match">84%</span></div><strong>Sales Managers</strong><p class="meta">O*NET 11-2022.00</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div><span class="match">82%</span></div><strong>Meeting, Convention, and Event Planners</strong><p class="meta">O*NET 13-1121.00</p></div><div class="tile t-actions"><strong style="margin-right:auto">Enterprising, Social, Artistic · taken 2 Sep</strong><span class="pill plain">Top matches</span><span class="pill plain">Also worth a look</span></div></div></div><div class="view" data-view="notifications" data-url="app.moonjtech.com/notifications" hidden><div class="topnav"><div class="wordmark">Aid<b>Vise</b></div><nav><a data-goto="home" class="">Home</a><a data-goto="jobs" class="">Jobs</a><a data-goto="applications" class="">Applications</a><a data-goto="resumes" class="">Resumes</a><a data-goto="assessment" class="">Assessment</a><a data-goto="notifications" class="on">Notifications</a><a data-goto="employer" class="">Employer view</a></nav><div class="avatar">AR</div></div><div class="d-wrap"><div class="tile d-hero"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"/></svg></div><p class="eyebrow">Notifications</p><h3 style="font-size:var(--step-3)">You have been shortlisted</h3><p class="meta">2h ago</p><p class=body>MoonJTech shortlisted you for Brand Partnerships Lead. A screening test is waiting.</p><div style="display:flex;gap:10px;align-items:center;margin-top:6px"><span class="pill warn">New</span><button class="btn primary">Mark all read</button></div></div><div class="tile"><p class="eyebrow">Unread</p><div class="big num">2</div></div><div class="tile"><p class="eyebrow">This week</p><div class="big num">5</div></div><div class="tile unread"><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><span class="pill warn">New</span></div><strong>Interview stage</strong><p class="meta">1d ago</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg></div></div><strong>Application being reviewed</strong><p class="meta">1d ago</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></div></div><strong>Milestone: Seen by an employer</strong><p class="meta">2d ago</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="ico-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></div></div><strong>Resume ready</strong><p class="meta">5d ago</p></div><div class="tile t-actions"><strong style="margin-right:auto">2 unread</strong><span class="pill plain">Unread</span><span class="pill plain">Earlier</span></div></div></div><div class="view" data-view="employer" data-url="app.moonjtech.com/vendor/applicants" hidden><div class="topnav"><div class="wordmark">Aid<b>Vise</b></div><nav><a data-goto="home" class="">Home</a><a data-goto="jobs" class="">Jobs</a><a data-goto="applications" class="">Applications</a><a data-goto="resumes" class="">Resumes</a><a data-goto="assessment" class="">Assessment</a><a data-goto="notifications" class="">Notifications</a><a data-goto="employer" class="on">Employer view</a></nav><div class="avatar" style="background:var(--steel);color:#fff">MJ</div></div><div class="d-wrap"><div class="tile d-hero"><div class="logo l1">AR</div><p class="eyebrow">Applicants · Digital Marketing Executive</p><h3 style="font-size:var(--step-3)">Aisyah Rahman</h3><p class="meta">Applied 3 Nov · skills 6 of 7</p><p class=body>Three years in performance marketing; ran Meta and Google campaigns for two retail brands.</p><div style="display:flex;gap:10px;align-items:center;margin-top:6px"><span class="num">92</span><button class="btn primary">Post a job</button></div></div><div class="tile"><p class="eyebrow">Applicants</p><div class="big num">32</div></div><div class="tile"><p class="eyebrow">Average score</p><div class="big num">71</div></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l1">DL</div><span class="num">85</span></div><strong>Daniel Lim</strong><p class="meta">Applied 4 Nov · skills 5 of 7</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l1">NI</div><span class="num">79</span></div><strong>Nurul Izzah</strong><p class="meta">Applied 5 Nov · skills 5 of 7</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l1">AP</div><span class="num">71</span></div><strong>Arjun Pillai</strong><p class="meta">Applied 6 Nov · skills 4 of 7</p></div><div class="tile "><div style="display:flex;gap:10px;align-items:center"><div class="logo l1">MT</div><span class="num">64</span></div><strong>Mei Ling Tan</strong><p class="meta">Applied 7 Nov · skills 3 of 7</p></div><div class="tile t-actions"><strong style="margin-right:auto">MoonJTech · 32 applicants · sorted by score</strong><span class="pill plain">Submitted</span><span class="pill plain">Reviewed</span><span class="pill plain">Shortlisted</span><span class="pill plain">Interview</span><span class="pill plain">Not selected</span></div></div></div></div></div><div class="notes"><div class="note"><h4>Good for</h4><ul><li>Feels modern and personal at a glance</li><li>Size tells people what matters most</li><li>Strong for demos and pitches</li></ul></div><div class="note"><h4>Watch out for</h4><ul><li>Each tile needs real content or it looks empty</li><li>Weak for long lists; jobs and notifications get cut off</li></ul></div><div class="note"><h4>Where it fits in AidVise</h4><ul><li>Job seeker home / overview</li><li>Career progress</li></ul></div></div></section></main><script>
+(() => {
+  // Pages inside a mockup: any [data-goto] switches that frame's view.
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-goto]');
+    if (!link) return;
+    e.preventDefault();
+    const frame = link.closest('.frame');
+    const target = link.dataset.goto;
+    frame.querySelectorAll('.view').forEach(v => {
+      v.hidden = v.dataset.view !== target;
+      if (!v.hidden) frame.querySelector('.url').textContent = v.dataset.url;
+    });
+  });
+  // Style switcher (gallery only).
+  const buttons = [...document.querySelectorAll('.switcher button')];
+  if (!buttons.length) return;
+  const show = (id) => {
+    buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === id)));
+    document.querySelectorAll('.draft').forEach(s => { s.hidden = s.id !== id; });
+  };
+  buttons.forEach(b => b.addEventListener('click', () => {
+    show(b.dataset.id);
+    try { history.replaceState(null, '', '#' + b.dataset.id); } catch (e) {}
+  }));
+  const start = location.hash.slice(1);
+  if (buttons.some(b => b.dataset.id === start)) show(start);
+})();
+</script></body></html>

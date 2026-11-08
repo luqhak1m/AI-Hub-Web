@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/layout.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/admin/admin_page.dart';
-import 'package:aidvise_platform/shared/widgets/app_card.dart';
 
 /// Admin user directory: find an account, then change its plan, reset its
 /// password, or suspend it.
@@ -44,43 +46,45 @@ class _AdminUsersScreenState extends State<AdminUsersScreen>
         emptyText: 'No users match.',
         onRetry: load,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          padding: const EdgeInsets.only(bottom: 24),
           children: pagedChildren('account', [
-            for (final u in items)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: AppCard(
-                  compact: true,
-                  icon: switch (u['role']) {
-                    'admin' => Icons.admin_panel_settings,
-                    'vendor' => Icons.storefront,
-                    _ => Icons.person,
-                  },
-                  title: (u['full_name'] as String?)?.isNotEmpty == true
-                      ? u['full_name'] as String
-                      : u['username'] as String,
-                  inlineTag: u['is_active'] == false ? 'DEACTIVATED' : null,
-                  description: _summary(u),
-                  onTap: () => _openUser(u['id'] as int),
-                ),
-              ),
+            // Draft "Data table": one row per account.
+            UiTable(
+              columns: const ['Name', 'Username', 'Type', 'Plan / company', 'Status'],
+              rows: [
+                for (final u in items)
+                  UiTableRow(
+                    [
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        UiAvatar((u['full_name'] as String?)?.isNotEmpty == true
+                            ? u['full_name'] as String
+                            : u['username'] as String, size: 28),
+                        const SizedBox(width: 10),
+                        Text((u['full_name'] as String?)?.isNotEmpty == true
+                            ? u['full_name'] as String
+                            : u['username'] as String, style: Ui.body(weight: FontWeight.w600)),
+                      ]),
+                      Text('@${u['username']}', style: Ui.meta),
+                      Pill(switch (u['role']) { 'admin' => 'Admin', 'vendor' => 'Employer', _ => 'Job seeker' },
+                          tone: u['role'] == 'admin' ? Tone.brand : Tone.plain),
+                      Text(u['role'] == 'vendor'
+                          ? '${u['company_name'] ?? '—'} (${u['vendor_status']})'
+                          : '${(u['tier'] as String? ?? 'free')[0].toUpperCase()}${(u['tier'] as String? ?? 'free').substring(1)} plan'),
+                      u['is_active'] == false
+                          ? const Pill('Deactivated', tone: Tone.bad)
+                          : const Pill('Active', tone: Tone.good),
+                    ],
+                    onTap: () => _openUser(u['id'] as int),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 10),
           ]),
         ),
       ),
     );
   }
 
-  static String _summary(Map<String, dynamic> u) {
-    final parts = <String>['@${u['username']}'];
-    if (u['role'] == 'vendor') {
-      parts.add('${u['company_name'] ?? 'Employer'} (${u['vendor_status']})');
-    } else {
-      parts.add('${_titleCase(u['tier'] as String)} plan');
-    }
-    return parts.join(' · ');
-  }
-
-  static String _titleCase(String s) => s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 
   Future<void> _openUser(int userId) async {
     final updated = await showDialog<Map<String, dynamic>>(
@@ -192,7 +196,7 @@ class _UserDialogState extends State<_UserDialog> {
               const Text(
                 'Use this for complimentary or business accounts. People who pay '
                 'through the App Store or Google Play are managed by their subscription.',
-                style: TextStyle(fontSize: 12, color: Color(0xFF888888), height: 1.4),
+                style: TextStyle(fontSize: 12, color: Ui.muted, height: 1.4),
               ),
             ],
           ),
@@ -320,7 +324,7 @@ class _UserDialogState extends State<_UserDialog> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              SizedBox(width: 150, child: Text(label, style: const TextStyle(color: Color(0xFF888888), fontSize: 13))),
+              SizedBox(width: 150, child: Text(label, style: const TextStyle(color: Ui.muted, fontSize: 13))),
               Expanded(child: Text(value, style: const TextStyle(color: AppTheme.primary, fontSize: 13))),
             ]),
           ),

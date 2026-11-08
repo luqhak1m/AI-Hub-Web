@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
@@ -109,11 +110,12 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
               padding: EdgeInsets.fromLTRB(
                   16, 10, 16, 10 + MediaQuery.of(context).padding.bottom),
               decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(top: BorderSide(color: AppTheme.primary, width: 0.5)),
+                color: Ui.surface,
+                border: Border(top: BorderSide(color: Ui.line)),
               ),
+              alignment: Alignment.centerRight,
               child: SizedBox(
-                height: 50,
+                height: 44,
                 child: ElevatedButton(
                   onPressed: (_complete && !_submitting) ? _submit : null,
                   style: ElevatedButton.styleFrom(
@@ -121,7 +123,7 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    disabledBackgroundColor: const Color(0xFFCCCCCC),
+                    disabledBackgroundColor: Ui.surface3,
                   ),
                   child: _submitting
                       ? const SizedBox(width: 22, height: 22,
@@ -140,7 +142,7 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
           : _assessment == null
               ? Center(
                   child: Text(_error ?? 'No assessment available.',
-                      style: const TextStyle(color: Color(0xFF888888))))
+                      style: const TextStyle(color: Ui.muted)))
               : ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
@@ -148,13 +150,13 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
                       'Screening questions from ${_assessment!['company'] ?? 'the company'}. '
                       'Answer carefully — you can only submit once.',
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 12.5, height: 1.4),
+                          color: Ui.muted, fontSize: 12.5, height: 1.4),
                     ),
                     if (_error != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: Text(_error!,
-                            style: const TextStyle(color: Color(0xFFEF233C), fontSize: 13)),
+                            style: const TextStyle(color: Ui.bad, fontSize: 13)),
                       ),
                     const SizedBox(height: 14),
                     ..._questions.asMap().entries.map(
@@ -172,7 +174,7 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: Ui.surface,
         borderRadius: BorderRadius.circular(10),
         boxShadow: AppTheme.cardShadow,
       ),
@@ -210,7 +212,7 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
               color: selected ? AppTheme.primary : Colors.white,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                  color: selected ? AppTheme.primary : const Color(0xFFDDDDDD)),
+                  color: selected ? AppTheme.primary : Ui.line),
             ),
             child: Text(entry.value,
                 style: TextStyle(
@@ -234,7 +236,7 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
       onChanged: (v) => setState(() => _answers[qid] = v),
       decoration: InputDecoration(
         hintText: 'Type your answer...',
-        hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13.5),
+        hintStyle: const TextStyle(color: Ui.muted, fontSize: 13.5),
         filled: true,
         fillColor: Colors.white,
         counterText: '',
@@ -259,7 +261,7 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
             child: Icon(
               filled ? Icons.star : Icons.star_border,
               size: 32,
-              color: filled ? AppTheme.primary : const Color(0xFFBBBBBB),
+              color: filled ? AppTheme.primary : Ui.muted,
             ),
           ),
         );
@@ -277,14 +279,14 @@ class _ScreeningScreenState extends State<ScreeningScreen> {
           max: 100,
           divisions: 100,
           activeColor: AppTheme.primary,
-          inactiveColor: const Color(0xFFDDDDDD),
+          inactiveColor: Ui.line,
           label: '${(value ?? 50).round()}',
           onChanged: (v) => setState(() => _answers[qid] = v.round()),
         ),
         Text(
           value == null ? 'Slide to answer' : '${value.round()} / 100',
           style: TextStyle(
-              color: value == null ? const Color(0xFFAAAAAA) : AppTheme.primary,
+              color: value == null ? Ui.muted : AppTheme.primary,
               fontSize: 12, fontWeight: FontWeight.w600),
         ),
       ],

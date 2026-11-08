@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
@@ -79,7 +80,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
                   : 'Last checked ${MaterialLocalizations.of(dialogContext).formatMediumDate(DateTime.parse(checked).toLocal())} '
                       'at ${TimeOfDay.fromDateTime(DateTime.parse(checked).toLocal()).format(dialogContext)}. '
                       'The stores are checked every hour.',
-              style: const TextStyle(fontSize: 12, color: Color(0xFF888888)),
+              style: const TextStyle(fontSize: 12, color: Ui.muted),
             ),
           ],
         ),
@@ -121,7 +122,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
         emptyText: 'No plans.',
         onRetry: _load,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          padding: const EdgeInsets.only(bottom: 24),
           children: [
             for (final p in _plans)
               Padding(
@@ -146,7 +147,7 @@ class _AdminPlansScreenState extends State<AdminPlansScreen> {
             const Text(
               'Tap a plan to edit it. Price changes apply to new subscribers; '
               'people already subscribed keep their current price.',
-              style: TextStyle(color: Color(0xFF888888), fontSize: 12),
+              style: TextStyle(color: Ui.muted, fontSize: 12),
             ),
           ],
         ),
@@ -316,7 +317,7 @@ class _PlanEditorState extends State<_PlanEditor> {
   Widget _section(String title) => Padding(
         padding: const EdgeInsets.only(top: 18, bottom: 8),
         child: Text(title.toUpperCase(),
-            style: const TextStyle(color: Color(0xFF888888), fontSize: 11,
+            style: const TextStyle(color: Ui.muted, fontSize: 11,
                 fontWeight: FontWeight.w600, letterSpacing: 0.8)),
       );
 
@@ -384,7 +385,7 @@ class _PlanEditorState extends State<_PlanEditor> {
               if (_plan['key'] == 'free')
                 const Text(
                   'The free plan is not sold in the stores, so leave its store fields empty.',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF888888)),
+                  style: TextStyle(fontSize: 12, color: Ui.muted),
                 ),
             ],
           ),

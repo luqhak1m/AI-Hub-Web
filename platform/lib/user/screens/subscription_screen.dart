@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
@@ -93,7 +94,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ElevatedButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEF233C), foregroundColor: Colors.white),
+                backgroundColor: Ui.bad, foregroundColor: Colors.white),
             child: const Text('Cancel Pro'),
           ),
         ],
@@ -143,7 +144,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(_error!,
-                        style: const TextStyle(color: Color(0xFFEF233C), fontSize: 13)),
+                        style: const TextStyle(color: Ui.bad, fontSize: 13)),
                   ),
                 for (final plan in _plans) ...[
                   _planCard(
@@ -156,21 +157,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   const SizedBox(height: 14),
                 ],
                 const SizedBox(height: 6),
-                SizedBox(
-                  height: 50,
+                Container(
+                  alignment: Alignment.centerLeft,
+                  height: 44,
                   child: _isPro
                       ? OutlinedButton(
                           onPressed: _working ? null : _cancel,
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFFEF233C),
-                            side: const BorderSide(color: Color(0xFFEF233C)),
+                            foregroundColor: Ui.bad,
+                            side: const BorderSide(color: Ui.bad),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
                           ),
                           child: _working
                               ? const SizedBox(width: 22, height: 22,
                                   child: CircularProgressIndicator(
-                                      strokeWidth: 2.5, color: Color(0xFFEF233C)))
+                                      strokeWidth: 2.5, color: Ui.bad))
                               : const Text('Cancel Subscription',
                                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                         )
@@ -182,7 +184,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
-                            disabledBackgroundColor: const Color(0xFFCCCCCC),
+                            disabledBackgroundColor: Ui.surface3,
                           ),
                           child: _working
                               ? const SizedBox(width: 22, height: 22,
@@ -198,7 +200,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ? 'Cancelling returns you to Free limits immediately.'
                       : 'Billed monthly. Cancel anytime.',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Color(0xFF999999), fontSize: 12),
+                  style: const TextStyle(color: Ui.muted, fontSize: 12),
                 ),
               ],
             ),

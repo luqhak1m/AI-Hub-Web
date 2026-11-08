@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
@@ -96,7 +98,7 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
             children: [
               Text(_error!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Color(0xFF888888))),
+                  style: const TextStyle(color: Ui.muted)),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _load,
@@ -128,64 +130,15 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
     ];
   }
 
+  /// The drafts' `.f-stats`: four numbers in one row.
   Widget _statTiles(Map<String, dynamic> stats) {
     final years = (stats['years_experience'] as num?)?.toDouble() ?? 0;
-    return GridView.count(
-      crossAxisCount: 2,
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 1.9,
-      children: [
-        _stat(years == years.roundToDouble()
-            ? years.toStringAsFixed(0)
-            : years.toStringAsFixed(1), 'Years experience'),
-        _stat('${stats['roles'] ?? 0}', 'Roles held'),
-        _stat('${stats['skills'] ?? 0}', 'Skills'),
-        _stat('${stats['certifications'] ?? 0}', 'Certifications'),
-      ],
-    );
-  }
-
-  Widget _stat(String value, String label) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      decoration: BoxDecoration(
-        color: AppTheme.cardGrey,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.cardHairline, width: 0.8),
-        boxShadow: AppTheme.cardShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            value,
-            style: const TextStyle(
-              color: AppTheme.primary,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'monospace',
-              fontFamilyFallback: ['Courier New', 'Courier'],
-              letterSpacing: -0.5,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label.toUpperCase(),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-                color: AppTheme.primary,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.8),
-          ),
-        ],
-      ),
-    );
+    return StatsRow([
+      ('Years experience', years == years.roundToDouble() ? years.toStringAsFixed(0) : years.toStringAsFixed(1)),
+      ('Roles held', '${stats['roles'] ?? 0}'),
+      ('Skills', '${stats['skills'] ?? 0}'),
+      ('Certifications', '${stats['certifications'] ?? 0}'),
+    ]);
   }
 
   Widget _alignmentCard() {
@@ -235,7 +188,7 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
             Text(
               alignment['basis'] as String? ?? '',
               style: const TextStyle(
-                color: Color(0xFF888888),
+                color: Ui.muted,
                 fontSize: 11,
                 fontFamily: 'monospace',
                 fontFamilyFallback: ['Courier New', 'Courier'],
@@ -257,7 +210,7 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
           child: Text(
             label.toUpperCase(),
             style: const TextStyle(
-                color: Color(0xFF888888),
+                color: Ui.muted,
                 fontSize: 9.5,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.8,
@@ -277,7 +230,7 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
                       height: 1.3)),
               Text(detail,
                   style: const TextStyle(
-                      color: Color(0xFF888888), fontSize: 11.5, height: 1.4)),
+                      color: Ui.muted, fontSize: 11.5, height: 1.4)),
             ],
           ),
         ),
@@ -350,7 +303,7 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
                   Text(
                     when.toUpperCase(),
                     style: const TextStyle(
-                      color: Color(0xFF888888),
+                      color: Ui.muted,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'monospace',
@@ -366,7 +319,7 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
                   if ((entry['detail'] as String? ?? '').isNotEmpty)
                     Text(entry['detail'] as String? ?? '',
                         style: const TextStyle(
-                            color: Color(0xFF888888), fontSize: 12.5)),
+                            color: Ui.muted, fontSize: 12.5)),
                 ],
               ),
             ),
@@ -446,7 +399,7 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
                   Text(
                     subtitle,
                     style: const TextStyle(
-                        color: Color(0xFF888888), fontSize: 11.5, height: 1.35),
+                        color: Ui.muted, fontSize: 11.5, height: 1.35),
                   ),
               ],
             ),
@@ -477,8 +430,7 @@ class _CareerProgressScreenState extends State<CareerProgressScreen> {
             if (widget.onAddExperience != null) ...[
               const SizedBox(height: 16),
               SizedBox(
-                width: double.infinity,
-                height: 46,
+                height: 44,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primary,

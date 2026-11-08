@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/user/screens/resume_pdf_screen.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
@@ -116,7 +117,7 @@ class _ResumeLoadingScreenState extends State<ResumeLoadingScreen> {
           SizedBox(height: 20),
           Text('Building your resume...', style: TextStyle(color: AppTheme.primary, fontSize: 15)),
           SizedBox(height: 8),
-          Text('This takes about 10–15 seconds', style: TextStyle(color: Color(0xFF888888), fontSize: 13)),
+          Text('This takes about 10–15 seconds', style: TextStyle(color: Ui.muted, fontSize: 13)),
         ]),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 
 /// Job listing card shared by the matched-jobs and browse screens.
@@ -24,7 +25,7 @@ class JobCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: Ui.surface,
         borderRadius: BorderRadius.circular(10),
         boxShadow: AppTheme.cardShadow,
       ),
@@ -35,26 +36,26 @@ class JobCard extends StatelessWidget {
               style: const TextStyle(color: AppTheme.primary, fontSize: 15, fontWeight: FontWeight.w600)),
           const SizedBox(height: 2),
           Text(job['company'] as String? ?? '',
-              style: const TextStyle(color: Color(0xFF444444), fontSize: 13, fontWeight: FontWeight.w500)),
+              style: const TextStyle(color: Ui.muted, fontSize: 13, fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 14, color: Color(0xFF888888)),
+              const Icon(Icons.location_on_outlined, size: 14, color: Ui.muted),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(job['location'] as String? ?? '',
-                    style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                    style: const TextStyle(color: Ui.muted, fontSize: 12)),
               ),
             ],
           ),
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.payments_outlined, size: 14, color: Color(0xFF888888)),
+              const Icon(Icons.payments_outlined, size: 14, color: Ui.muted),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(job['salary'] as String? ?? '',
-                    style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                    style: const TextStyle(color: Ui.muted, fontSize: 12)),
               ),
             ],
           ),
@@ -69,26 +70,26 @@ class JobCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: const Color(0xFFDDDDDD)),
+                  border: Border.all(color: Ui.line),
                 ),
                 child: Text(job['type'] as String? ?? '',
-                    style: const TextStyle(color: Color(0xFF666666), fontSize: 11)),
+                    style: const TextStyle(color: Ui.muted, fontSize: 11)),
               ),
               if (job['source'] == 'sample') ...[
                 const SizedBox(width: 6),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEEEEEE),
+                    color: Ui.line,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Text('Sample',
-                      style: TextStyle(color: Color(0xFF999999), fontSize: 11)),
+                      style: TextStyle(color: Ui.muted, fontSize: 11)),
                 ),
               ],
               const Spacer(),
               Text(job['posted'] as String? ?? '',
-                  style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 11)),
+                  style: const TextStyle(color: Ui.muted, fontSize: 11)),
             ],
           ),
           const SizedBox(height: 12),
@@ -99,8 +100,8 @@ class JobCard extends StatelessWidget {
               onPressed: applied ? null : onApply,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primary, foregroundColor: Colors.white, elevation: 0,
-                disabledBackgroundColor: const Color(0xFFE0E0E0),
-                disabledForegroundColor: const Color(0xFF888888),
+                disabledBackgroundColor: Ui.line,
+                disabledForegroundColor: Ui.muted,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               child: Text(applied ? 'Applied' : 'Apply with Tailored Resume',

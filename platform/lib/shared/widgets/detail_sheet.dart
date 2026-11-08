@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:aidvise_platform/shared/utils/app_theme.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 
 /// A section inside a [showDetailSheet]: a grey heading band with an icon,
 /// followed by its content.
@@ -12,6 +13,73 @@ class DetailSection {
     this.icon = Icons.info_outline,
     required this.child,
   });
+}
+
+/// Everything a detail view shows. Built once per kind of item (job, career,
+/// notification, applicant) and shown either as a bottom sheet
+/// ([showDetailSpec]) or inline beside a list on wide screens ([DetailPane]).
+class DetailSpec {
+  final String title;
+  final String? meta;
+  final String? subtitle;
+  final List<Widget> headerExtras;
+  final List<DetailSection> sections;
+  final String? actionLabel;
+  final IconData? actionIcon;
+  final VoidCallback? onAction;
+  final bool actionEnabled;
+  final double initialSize;
+
+  const DetailSpec({
+    required this.title,
+    this.meta,
+    this.subtitle,
+    this.headerExtras = const [],
+    required this.sections,
+    this.actionLabel,
+    this.actionIcon,
+    this.onAction,
+    this.actionEnabled = true,
+    this.initialSize = 0.6,
+  });
+}
+
+Future<void> showDetailSpec(BuildContext context, DetailSpec spec) =>
+    showDetailSheet(
+      context,
+      title: spec.title,
+      meta: spec.meta,
+      subtitle: spec.subtitle,
+      headerExtras: spec.headerExtras,
+      sections: spec.sections,
+      actionLabel: spec.actionLabel,
+      actionIcon: spec.actionIcon,
+      onAction: spec.onAction,
+      actionEnabled: spec.actionEnabled,
+      initialSize: spec.initialSize,
+    );
+
+/// A detail view laid out inline — the right-hand side of a list + detail
+/// page. Same header, sections and action as the sheet, without the grab
+/// handle, and the action does not close anything.
+class DetailPane extends StatelessWidget {
+  final DetailSpec spec;
+  const DetailPane({super.key, required this.spec});
+
+  @override
+  Widget build(BuildContext context) => _DetailSheet(
+        controller: null,
+        inline: true,
+        title: spec.title,
+        meta: spec.meta,
+        subtitle: spec.subtitle,
+        headerExtras: spec.headerExtras,
+        sections: spec.sections,
+        actionLabel: spec.actionLabel,
+        actionIcon: spec.actionIcon,
+        onAction: spec.onAction,
+        actionEnabled: spec.actionEnabled,
+      );
 }
 
 /// The app's one detail sheet: everything a card can expand into uses this so
@@ -33,9 +101,9 @@ Future<void> showDetailSheet(
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: context.ui.surface,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(Ui.radius)),
     ),
     builder: (_) => DraggableScrollableSheet(
       expand: false,
@@ -59,7 +127,11 @@ Future<void> showDetailSheet(
 }
 
 class _DetailSheet extends StatelessWidget {
-  final ScrollController controller;
+  final ScrollController? controller;
+
+  /// Shown beside a list rather than in a sheet: no grab handle, and the
+  /// action runs without dismissing anything.
+  final bool inline;
   final String title;
   final String? meta;
   final String? subtitle;
@@ -72,6 +144,7 @@ class _DetailSheet extends StatelessWidget {
 
   const _DetailSheet({
     required this.controller,
+    this.inline = false,
     required this.title,
     required this.sections,
     this.meta,
@@ -92,18 +165,20 @@ class _DetailSheet extends StatelessWidget {
             controller: controller,
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
             children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFDDDDDD),
-                    borderRadius: BorderRadius.circular(2),
+              if (!inline) ...[
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: context.ui.line,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              _header(),
+                const SizedBox(height: 20),
+              ],
+              _header(context),
               for (final section in sections) ...[
                 const SizedBox(height: 22),
                 sectionTitle(section.title, section.icon),
@@ -118,89 +193,47 @@ class _DetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _header() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: AppTheme.cardGreyDeep,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.cardHairline, width: 0.8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                      color: AppTheme.primary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 1.3),
-                ),
-              ),
-              if (meta != null) ...[
-                const SizedBox(width: 10),
-                Text(
-                  meta!,
-                  style: const TextStyle(
-                    color: AppTheme.primary,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'monospace',
-                    fontFamilyFallback: ['Courier New', 'Courier'],
-                  ),
-                ),
-              ],
+  Widget _header(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: Text(title, style: context.ui.display(Ui.step2))),
+            if (meta != null) ...[
+              const SizedBox(width: 10),
+              Text(meta!,
+                  style: context.ui.body(weight: FontWeight.w700, color: context.ui.good).copyWith(fontFeatures: Ui.tabular)),
             ],
-          ),
-          if (subtitle != null && subtitle!.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              subtitle!,
-              style: const TextStyle(
-                  color: AppTheme.primary, fontSize: 13.5, height: 1.5),
-            ),
           ],
-          ...headerExtras,
+        ),
+        if (subtitle != null && subtitle!.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Text(subtitle!, style: context.ui.meta),
         ],
-      ),
+        ...headerExtras,
+      ],
     );
   }
 
   Widget _actionBar(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-          24, 12, 24, 12 + MediaQuery.of(context).padding.bottom),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFEEEEEE))),
+      padding: EdgeInsets.fromLTRB(24, 12, 24, 12 + MediaQuery.of(context).padding.bottom),
+      decoration: BoxDecoration(
+        color: context.ui.surface,
+        border: Border(top: BorderSide(color: context.ui.line)),
       ),
       child: SizedBox(
         width: double.infinity,
-        height: 50,
-        child: ElevatedButton.icon(
-          icon: Icon(actionIcon ?? Icons.arrow_forward, size: 18),
-          label: Text(actionLabel!,
-              style:
-                  const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primary,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            disabledBackgroundColor: const Color(0xFFE0E0E0),
-            disabledForegroundColor: const Color(0xFF888888),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
+        height: 44,
+        child: UiButton(
+          actionLabel!,
+          icon: actionIcon,
           onPressed: !actionEnabled || onAction == null
               ? null
               : () {
-                  Navigator.of(context).pop();
+                  if (!inline) Navigator.of(context).pop();
                   onAction!();
                 },
         ),
@@ -209,33 +242,5 @@ class _DetailSheet extends StatelessWidget {
   }
 }
 
-/// Grey heading band used by every detail sheet. Never navy — navy fills are
-/// buttons, and a heading is not tappable.
-Widget sectionTitle(String text, [IconData icon = Icons.info_outline]) {
-  return Align(
-    alignment: Alignment.centerLeft,
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-      decoration: BoxDecoration(
-        color: AppTheme.cardGrey,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppTheme.cardHairline, width: 0.8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 15, color: AppTheme.primary),
-          const SizedBox(width: 8),
-          Text(
-            text.toUpperCase(),
-            style: const TextStyle(
-                color: AppTheme.primary,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+/// Section label used by every detail view — the drafts' `.eyebrow`.
+Widget sectionTitle(String text, [IconData icon = Icons.info_outline]) => Eyebrow(text);

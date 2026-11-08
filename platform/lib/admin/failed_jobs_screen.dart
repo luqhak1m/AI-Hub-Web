@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
@@ -62,22 +64,28 @@ class _AdminJobsScreenState extends State<AdminJobsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(title: const Text('Failed Generations')),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(92),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+          child: ContentHead(eyebrow: 'Generations that need a retry', title: 'Failed resumes'),
+        ),
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
           : _error != null
               ? Center(
                   child: Text(_error!,
-                      style: const TextStyle(color: Color(0xFF888888))))
+                      style: const TextStyle(color: Ui.muted)))
               : _jobs.isEmpty
                   ? const Center(
                       child: Text('No failed jobs — all clear.',
-                          style: TextStyle(color: Color(0xFF888888))))
+                          style: TextStyle(color: Ui.muted)))
                   : RefreshIndicator(
                       onRefresh: _load,
                       color: AppTheme.primary,
                       child: ListView.builder(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                         itemCount: _jobs.length,
                         itemBuilder: (context, index) =>
                             _buildCard(_jobs[index]),
@@ -93,7 +101,7 @@ class _AdminJobsScreenState extends State<AdminJobsScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFE0E0E0)),
+        border: Border.all(color: Ui.line),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -132,12 +140,12 @@ class _AdminJobsScreenState extends State<AdminJobsScreen> {
           Text(
             job['error']?.toString() ?? 'No error recorded',
             style: const TextStyle(
-                color: Color(0xFFEF233C), fontSize: 12.5, height: 1.4),
+                color: Ui.bad, fontSize: 12.5, height: 1.4),
           ),
           const SizedBox(height: 4),
           Text(
             'Failed at: ${job['finished_at'] ?? '—'}',
-            style: const TextStyle(color: Color(0xFF999999), fontSize: 11.5),
+            style: const TextStyle(color: Ui.muted, fontSize: 11.5),
           ),
         ],
       ),

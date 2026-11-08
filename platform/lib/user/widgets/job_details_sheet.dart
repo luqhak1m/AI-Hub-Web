@@ -3,13 +3,13 @@ import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/shared/widgets/detail_sheet.dart';
 
-/// Slide-up job details: full description, required skills, and applying.
-/// Shared by Browse Jobs, Matched Jobs, and My Applications so every place
-/// shows the same job the same way.
-Future<void> showJobDetailsSheet(
-  BuildContext context,
+/// Job details: full description, required skills, and applying. Shared by
+/// Browse Jobs, Matched Jobs, and My Applications so every place shows the
+/// same job the same way — as a slide-up sheet, or beside the job list on
+/// wide screens.
+DetailSpec jobDetailSpec(
   Map<String, dynamic> job, {
-  /// Runs the apply flow for this job. Omit to show the sheet read-only.
+  /// Runs the apply flow for this job. Omit to show the details read-only.
   Future<void> Function()? onApply,
 }) {
   final skills = ((job['required_skills'] as List<dynamic>?) ?? [])
@@ -23,8 +23,7 @@ Future<void> showJobDetailsSheet(
   final posted = job['posted'] as String? ?? '';
   final applied = job['applied'] == true;
 
-  return showDetailSheet(
-    context,
+  return DetailSpec(
     title: job['title'] as String? ?? '',
     subtitle: job['company'] as String?,
     initialSize: 0.7,
@@ -79,6 +78,14 @@ Future<void> showJobDetailsSheet(
     onAction: onApply,
   );
 }
+
+/// Slide-up job details sheet.
+Future<void> showJobDetailsSheet(
+  BuildContext context,
+  Map<String, dynamic> job, {
+  Future<void> Function()? onApply,
+}) =>
+    showDetailSpec(context, jobDetailSpec(job, onApply: onApply));
 
 /// Variant for places that only know the listing id (e.g. an application):
 /// fetches the full listing, then shows the same sheet.

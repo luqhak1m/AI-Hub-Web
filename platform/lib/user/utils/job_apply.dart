@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/user/models/profile_model.dart';
 import 'package:aidvise_platform/user/screens/template_catalog_screen.dart';
@@ -53,9 +54,9 @@ Future<void> applyToJob(BuildContext context, Map<String, dynamic> job) async {
   );
 
   if (choice == 'tailored') {
-    if (context.mounted) await _applyWithTailoredResume(context, job);
+    if (context.mounted) await applyWithTailoredResume(context, job);
   } else if (choice == 'upload') {
-    if (context.mounted) await _applyWithUpload(context, job);
+    if (context.mounted) await applyWithUpload(context, job);
   }
 }
 
@@ -76,7 +77,7 @@ class _ApplyOption extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
+          color: Ui.surface,
           borderRadius: BorderRadius.circular(10),
           boxShadow: AppTheme.cardShadow,
         ),
@@ -94,11 +95,11 @@ class _ApplyOption extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(subtitle,
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 12, height: 1.4)),
+                          color: Ui.muted, fontSize: 12, height: 1.4)),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, size: 20, color: Color(0xFF999999)),
+            const Icon(Icons.chevron_right, size: 20, color: Ui.muted),
           ],
         ),
       ),
@@ -107,7 +108,8 @@ class _ApplyOption extends StatelessWidget {
 }
 
 /// Upload path: pick a PDF, send it with the application immediately.
-Future<void> _applyWithUpload(BuildContext context, Map<String, dynamic> job) async {
+/// The web job page offers it as its own button.
+Future<void> applyWithUpload(BuildContext context, Map<String, dynamic> job) async {
   final listingId = job['id'] as int?;
   if (listingId == null) return;
 
@@ -155,7 +157,7 @@ Future<void> _applyWithUpload(BuildContext context, Map<String, dynamic> job) as
 
 /// Tailored path: profile -> template selection -> generation -> review ->
 /// confirm-apply on the PDF screen.
-Future<void> _applyWithTailoredResume(BuildContext context, Map<String, dynamic> job) async {
+Future<void> applyWithTailoredResume(BuildContext context, Map<String, dynamic> job) async {
   showDialog(
     context: context,
     barrierDismissible: false,

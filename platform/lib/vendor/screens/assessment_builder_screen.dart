@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
@@ -196,7 +197,7 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Text(_error!,
-                  style: const TextStyle(color: Color(0xFFEF233C), fontSize: 13)),
+                  style: const TextStyle(color: Ui.bad, fontSize: 13)),
             ),
           TextField(
             controller: _title,
@@ -207,7 +208,7 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
           const Text(
             'Sent automatically to candidates you shortlist. Multiple-choice '
             'questions with a marked correct answer are auto-scored.',
-            style: TextStyle(color: Color(0xFF999999), fontSize: 11.5, height: 1.4),
+            style: TextStyle(color: Ui.muted, fontSize: 11.5, height: 1.4),
           ),
           const SizedBox(height: 14),
           ..._questions.asMap().entries.map((e) => _buildQuestionCard(e.key, e.value)),
@@ -216,7 +217,7 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
               padding: EdgeInsets.symmetric(vertical: 30),
               child: Center(
                 child: Text('No questions yet. Tap "Add Question".',
-                    style: TextStyle(color: Color(0xFF888888), fontSize: 13)),
+                    style: TextStyle(color: Ui.muted, fontSize: 13)),
               ),
             ),
         ],
@@ -226,9 +227,9 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
 
   InputDecoration _decoration(String hint) => InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
+        hintStyle: const TextStyle(color: Ui.muted, fontSize: 14),
         filled: true,
-        fillColor: const Color(0xFFF5F5F5),
+        fillColor: Ui.surface,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -241,7 +242,7 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: Ui.surface,
         borderRadius: BorderRadius.circular(10),
         boxShadow: AppTheme.cardShadow,
       ),
@@ -252,14 +253,14 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
             children: [
               Text('Q${index + 1} · ${_typeLabels[q.type]}',
                   style: const TextStyle(
-                      color: Color(0xFF888888), fontSize: 11.5,
+                      color: Ui.muted, fontSize: 11.5,
                       fontWeight: FontWeight.w700, letterSpacing: 0.3)),
               const Spacer(),
               GestureDetector(
                 onTap: () => setState(() {
                   _questions.removeAt(index).dispose();
                 }),
-                child: const Icon(Icons.delete_outline, size: 18, color: Color(0xFF888888)),
+                child: const Icon(Icons.delete_outline, size: 18, color: Ui.muted),
               ),
             ],
           ),
@@ -287,7 +288,7 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
                       child: Icon(
                         isCorrect ? Icons.check_circle : Icons.circle_outlined,
                         size: 20,
-                        color: isCorrect ? AppTheme.primary : const Color(0xFFBBBBBB),
+                        color: isCorrect ? AppTheme.primary : Ui.muted,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -301,7 +302,7 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
                     ),
                     if (q.options.length > 2)
                       IconButton(
-                        icon: const Icon(Icons.close, size: 16, color: Color(0xFF999999)),
+                        icon: const Icon(Icons.close, size: 16, color: Ui.muted),
                         visualDensity: VisualDensity.compact,
                         onPressed: () => setState(() {
                           q.options.removeAt(optionIndex).dispose();
@@ -330,7 +331,7 @@ class _AssessmentBuilderScreenState extends State<AssessmentBuilderScreen> {
                   q.correctIndex == null
                       ? 'Tap a circle to mark the correct answer'
                       : 'Auto-scored',
-                  style: const TextStyle(color: Color(0xFF999999), fontSize: 11),
+                  style: const TextStyle(color: Ui.muted, fontSize: 11),
                 ),
               ],
             ),

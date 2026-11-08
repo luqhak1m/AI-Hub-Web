@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/user/widgets/job_card.dart';
 import 'package:aidvise_platform/user/widgets/job_details_sheet.dart';
@@ -79,7 +80,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(_error!, textAlign: TextAlign.center,
-                  style: const TextStyle(color: Color(0xFF888888), fontSize: 15)),
+                  style: const TextStyle(color: Ui.muted, fontSize: 15)),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _load,
@@ -93,7 +94,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
       );
 
   Widget _buildEmpty() => const Center(
-        child: Text('No matching jobs found.', style: TextStyle(color: Color(0xFF888888))),
+        child: Text('No matching jobs found.', style: TextStyle(color: Ui.muted)),
       );
 
   Widget _buildList() {
@@ -107,7 +108,7 @@ class _JobListingsScreenState extends State<JobListingsScreen> {
         const SizedBox(height: 4),
         const Text(
           'Curated from your top career paths, ranked by fit.',
-          style: TextStyle(color: Color(0xFF888888), fontSize: 14),
+          style: TextStyle(color: Ui.muted, fontSize: 14),
         ),
         const SizedBox(height: 20),
         for (final entry in _grouped) ..._buildOccupationSection(entry.key, entry.value),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
@@ -183,12 +184,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               _addButton('Add Certification', () => setState(() => _addCertWithData({}))),
               if (_error != null) ...[
                 const SizedBox(height: 12),
-                Text(_error!, style: const TextStyle(color: Color(0xFFEF233C))),
+                Text(_error!, style: const TextStyle(color: Ui.bad)),
               ],
               const SizedBox(height: 24),
               SizedBox(
-                width: double.infinity,
-                height: 50,
+                height: 44,
                 child: ElevatedButton(
                   onPressed: _loading ? null : _submit,
                   style: ElevatedButton.styleFrom(
@@ -196,7 +196,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    disabledBackgroundColor: const Color(0xFF888888),
+                    disabledBackgroundColor: Ui.muted,
                   ),
                   child: _loading
                       ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
@@ -222,12 +222,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       style: const TextStyle(color: AppTheme.primary),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color(0xFF888888)),
+        labelStyle: const TextStyle(color: Ui.muted),
         filled: true,
-        fillColor: const Color(0xFFF5F5F5),
+        fillColor: Ui.surface,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: AppTheme.primary, width: 1.5)),
-        errorStyle: const TextStyle(color: Color(0xFFEF233C), fontSize: 12),
+        errorStyle: const TextStyle(color: Ui.bad, fontSize: 12),
       ),
       validator: required ? (v) => v == null || v.trim().isEmpty ? 'Required' : null : null,
     ),
@@ -244,7 +244,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     child: Row(children: [
       Expanded(child: _field(ctrl, 'Skill ${index + 1}')),
       IconButton(
-        icon: const Icon(Icons.remove_circle_outline, color: Color(0xFF888888)),
+        icon: const Icon(Icons.remove_circle_outline, color: Ui.muted),
         onPressed: () => setState(() => _skills.removeAt(index)),
       ),
     ]),
@@ -253,12 +253,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   Widget _experienceCard(int i, Map<String, TextEditingController> e) => Container(
     margin: const EdgeInsets.only(bottom: 12),
     padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(10)),
+    decoration: BoxDecoration(color: Ui.surface, borderRadius: BorderRadius.circular(10)),
     child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text('Experience ${i + 1}', style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+        Text('Experience ${i + 1}', style: const TextStyle(color: Ui.muted, fontSize: 12)),
         IconButton(
-          icon: const Icon(Icons.close, color: Color(0xFF888888), size: 18),
+          icon: const Icon(Icons.close, color: Ui.muted, size: 18),
           onPressed: () => setState(() => _experiences.removeAt(i)),
         ),
       ]),
@@ -273,12 +273,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   Widget _educationCard(int i, Map<String, TextEditingController> e) => Container(
     margin: const EdgeInsets.only(bottom: 12),
     padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(10)),
+    decoration: BoxDecoration(color: Ui.surface, borderRadius: BorderRadius.circular(10)),
     child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text('Education ${i + 1}', style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+        Text('Education ${i + 1}', style: const TextStyle(color: Ui.muted, fontSize: 12)),
         IconButton(
-          icon: const Icon(Icons.close, color: Color(0xFF888888), size: 18),
+          icon: const Icon(Icons.close, color: Ui.muted, size: 18),
           onPressed: () => setState(() => _education.removeAt(i)),
         ),
       ]),
@@ -291,12 +291,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   Widget _certCard(int i, Map<String, TextEditingController> c) => Container(
     margin: const EdgeInsets.only(bottom: 12),
     padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(10)),
+    decoration: BoxDecoration(color: Ui.surface, borderRadius: BorderRadius.circular(10)),
     child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text('Certification ${i + 1}', style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+        Text('Certification ${i + 1}', style: const TextStyle(color: Ui.muted, fontSize: 12)),
         IconButton(
-          icon: const Icon(Icons.close, color: Color(0xFF888888), size: 18),
+          icon: const Icon(Icons.close, color: Ui.muted, size: 18),
           onPressed: () => setState(() => _certifications.removeAt(i)),
         ),
       ]),

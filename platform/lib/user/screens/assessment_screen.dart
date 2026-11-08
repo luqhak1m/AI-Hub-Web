@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
+import 'package:aidvise_platform/shared/utils/shell_scope.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
-import 'package:aidvise_platform/user/screens/result_screen.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
-import 'package:aidvise_platform/shared/utils/app_page_route.dart';
 
 class AssessmentScreen extends StatefulWidget {
   /// When true, skips the existing-result check so the user can answer the
@@ -42,9 +42,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       final existing = await ApiService.getLatestAssessmentResult();
       if (!mounted) return;
       if (existing != null) {
-        Navigator.of(context).pushReplacement(
-          AppPageRoute(builder: (_) => ResultScreen(result: existing)),
-        );
+        // Already taken: the Assessment page shows the result.
+        Navigator.of(context).pop();
         return;
       }
     } on ApiException catch (e) {
@@ -87,9 +86,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       }).toList();
       final result = await ApiService.submitAssessment(answers);
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        AppPageRoute(builder: (_) => ResultScreen(result: result)),
-      );
+      // Back to the Assessment page, which reloads and shows the new result.
+      Navigator.of(context).pop(result);
     } on ApiException catch (e) {
       if (mounted && handleSessionExpiry(context, e)) return;
       setState(() => _errorMessage = e.message);
@@ -147,18 +145,18 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                       color: isCurrent
                           ? AppTheme.primary
                           : answered
-                              ? const Color(0xFF444444)
+                              ? Ui.muted
                               : Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isCurrent || answered ? AppTheme.primary : const Color(0xFFDDDDDD),
+                        color: isCurrent || answered ? AppTheme.primary : Ui.line,
                       ),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       '${i + 1}',
                       style: TextStyle(
-                        color: isCurrent || answered ? Colors.white : const Color(0xFF888888),
+                        color: isCurrent || answered ? Colors.white : Ui.muted,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -173,20 +171,20 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 Container(width: 14, height: 14,
                   decoration: BoxDecoration(color: AppTheme.primary, borderRadius: BorderRadius.circular(4))),
                 const SizedBox(width: 6),
-                const Text('Current', style: TextStyle(fontSize: 12, color: Color(0xFF888888))),
+                const Text('Current', style: TextStyle(fontSize: 12, color: Ui.muted)),
                 const SizedBox(width: 16),
                 Container(width: 14, height: 14,
-                  decoration: BoxDecoration(color: const Color(0xFF444444), borderRadius: BorderRadius.circular(4))),
+                  decoration: BoxDecoration(color: Ui.muted, borderRadius: BorderRadius.circular(4))),
                 const SizedBox(width: 6),
-                const Text('Answered', style: TextStyle(fontSize: 12, color: Color(0xFF888888))),
+                const Text('Answered', style: TextStyle(fontSize: 12, color: Ui.muted)),
                 const SizedBox(width: 16),
                 Container(width: 14, height: 14,
                   decoration: BoxDecoration(
                     color: Colors.white, borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: const Color(0xFFDDDDDD)),
+                    border: Border.all(color: Ui.line),
                   )),
                 const SizedBox(width: 6),
-                const Text('Unanswered', style: TextStyle(fontSize: 12, color: Color(0xFF888888))),
+                const Text('Unanswered', style: TextStyle(fontSize: 12, color: Ui.muted)),
               ],
             ),
           ],
@@ -203,10 +201,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.primary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: sectionLeading(context),
         title: Text(
           _onSummary ? 'Review Answers' : 'Career Assessment',
           style: const TextStyle(color: AppTheme.primary),
@@ -232,12 +227,12 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, color: Color(0xFFEF233C), size: 48),
+            const Icon(Icons.error_outline, color: Ui.bad, size: 48),
             const SizedBox(height: 16),
             Text(
               _errorMessage ?? 'Something went wrong.',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Color(0xFF888888), fontSize: 15),
+              style: const TextStyle(color: Ui.muted, fontSize: 15),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -270,7 +265,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
           decoration: const BoxDecoration(
             color: Colors.white,
-            border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0), width: 0.5)),
+            border: Border(bottom: BorderSide(color: Ui.line, width: 0.5)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,7 +274,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('$answered of $total answered',
-                      style: const TextStyle(color: Color(0xFF888888), fontSize: 13)),
+                      style: const TextStyle(color: Ui.muted, fontSize: 13)),
                   Text('${(progress * 100).toInt()}%',
                       style: const TextStyle(color: AppTheme.primary, fontSize: 13, fontWeight: FontWeight.w600)),
                 ],
@@ -289,7 +284,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: progress,
-                  backgroundColor: const Color(0xFFE0E0E0),
+                  backgroundColor: Ui.line,
                   valueColor: const AlwaysStoppedAnimation(AppTheme.primary),
                   minHeight: 4,
                 ),
@@ -307,7 +302,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
               children: [
                 Text(
                   'Question ${_currentIndex + 1} of $total',
-                  style: const TextStyle(color: Color(0xFF888888), fontSize: 13),
+                  style: const TextStyle(color: Ui.muted, fontSize: 13),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -327,7 +322,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
           decoration: const BoxDecoration(
             color: Colors.white,
-            border: Border(top: BorderSide(color: Color(0xFFEEEEEE), width: 0.5)),
+            border: Border(top: BorderSide(color: Ui.line, width: 0.5)),
           ),
           child: _buildLikertOptions(id, options),
         ),
@@ -351,13 +346,13 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 const SizedBox(height: 6),
                 Text(
                   '$_answeredCount of ${_questions.length} questions answered.',
-                  style: const TextStyle(color: Color(0xFF888888), fontSize: 14),
+                  style: const TextStyle(color: Ui.muted, fontSize: 14),
                 ),
                 if (_answeredCount < _questions.length)
                   const Padding(
                     padding: EdgeInsets.only(top: 6),
                     child: Text('Unanswered questions are highlighted.',
-                        style: TextStyle(color: Color(0xFFEF233C), fontSize: 13)),
+                        style: TextStyle(color: Ui.bad, fontSize: 13)),
                   ),
               ],
             ),
@@ -380,16 +375,16 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: unanswered ? const Color(0xFFFFF3F3) : const Color(0xFFF5F5F5),
+              color: unanswered ? Ui.badSoft : Ui.surface,
               borderRadius: BorderRadius.circular(10),
               boxShadow: AppTheme.cardShadow,
-              border: unanswered ? Border.all(color: const Color(0xFFFFCCCC)) : null,
+              border: unanswered ? Border.all(color: Ui.badSoft) : null,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('$index.',
-                    style: const TextStyle(color: Color(0xFF888888), fontSize: 13, fontWeight: FontWeight.w600)),
+                    style: const TextStyle(color: Ui.muted, fontSize: 13, fontWeight: FontWeight.w600)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(text,
@@ -397,7 +392,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 ),
                 const SizedBox(width: 10),
                 unanswered
-                    ? const Text('—', style: TextStyle(color: Color(0xFFEF233C), fontWeight: FontWeight.w600))
+                    ? const Text('—', style: TextStyle(color: Ui.bad, fontWeight: FontWeight.w600))
                     : Container(
                         width: 32,
                         height: 32,
@@ -432,7 +427,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           if (_errorMessage != null && _onSummary) ...[
             Text(_errorMessage!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Color(0xFFEF233C), fontSize: 13)),
+                style: const TextStyle(color: Ui.bad, fontSize: 13)),
             const SizedBox(height: 8),
           ],
           if (_onSummary) ...[
@@ -442,18 +437,18 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                 child: Text(
                   '${_questions.length - _answeredCount} question(s) still unanswered. Tap any highlighted row to answer it.',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Color(0xFFEF233C), fontSize: 13),
+                  style: const TextStyle(color: Ui.bad, fontSize: 13),
                 ),
               ),
-            SizedBox(
-              height: 50,
-              width: double.infinity,
+            Container(
+              alignment: Alignment.centerRight,
+              height: 44,
               child: ElevatedButton(
                 onPressed: (_submitting || _answeredCount < _questions.length) ? null : _submit,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primary, foregroundColor: Colors.white, elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  disabledBackgroundColor: const Color(0xFFCCCCCC),
+                  disabledBackgroundColor: Ui.surface3,
                 ),
                 child: _submitting
                     ? const SizedBox(width: 22, height: 22,
@@ -475,7 +470,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.zero,
                       foregroundColor: AppTheme.primary,
-                      side: BorderSide(color: isFirst ? const Color(0xFFDDDDDD) : AppTheme.primary),
+                      side: BorderSide(color: isFirst ? Ui.line : AppTheme.primary),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: const Icon(Icons.arrow_back, size: 20),
@@ -490,7 +485,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                       height: 50,
                       margin: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
+                        color: Ui.surface,
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: AppTheme.cardShadow,
                       ),
@@ -551,14 +546,14 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     color: isSelected ? AppTheme.primary : Colors.white,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isSelected ? AppTheme.primary : const Color(0xFFDDDDDD),
+                      color: isSelected ? AppTheme.primary : Ui.line,
                     ),
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     '$optValue',
                     style: TextStyle(
-                      color: isSelected ? Colors.white : const Color(0xFF666666),
+                      color: isSelected ? Colors.white : Ui.muted,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       fontSize: 16,
                     ),
@@ -573,9 +568,9 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(sorted.isNotEmpty ? (sorted.first['text'] as String? ?? '') : '',
-                style: const TextStyle(color: Color(0xFF888888), fontSize: 11)),
+                style: const TextStyle(color: Ui.muted, fontSize: 11)),
             Text(sorted.isNotEmpty ? (sorted.last['text'] as String? ?? '') : '',
-                style: const TextStyle(color: Color(0xFF888888), fontSize: 11)),
+                style: const TextStyle(color: Ui.muted, fontSize: 11)),
           ],
         ),
       ],

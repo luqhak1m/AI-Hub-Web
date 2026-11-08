@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
@@ -56,33 +58,28 @@ class _AdminManageScreenState extends State<AdminManageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        // No back arrow when shown as a section of the admin panel.
-        leading: Navigator.of(context).canPop()
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppTheme.primary),
-                onPressed: () => Navigator.of(context).pop(),
-              )
-            : null,
-        title: const Text('Approve Vendors', style: TextStyle(color: AppTheme.primary)),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(92),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
+          child: ContentHead(eyebrow: 'Employers waiting to post jobs', title: 'Vendor approvals'),
+        ),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
           : _error != null
-              ? Center(child: Text(_error!, style: const TextStyle(color: Color(0xFF888888))))
+              ? Center(child: Text(_error!, style: const TextStyle(color: Ui.muted)))
               : RefreshIndicator(
                   onRefresh: _load,
                   color: AppTheme.primary,
                   child: ListView(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(bottom: 10),
                         child: Text('PENDING VENDOR APPLICATIONS',
                             style: TextStyle(
-                                color: Color(0xFF888888), fontSize: 11,
+                                color: Ui.muted, fontSize: 11,
                                 fontWeight: FontWeight.w600, letterSpacing: 0.8)),
                       ),
                       if (_pendingVendors.isEmpty)
@@ -90,7 +87,7 @@ class _AdminManageScreenState extends State<AdminManageScreen> {
                           padding: EdgeInsets.symmetric(vertical: 24),
                           child: Center(
                               child: Text('No pending applications.',
-                                  style: TextStyle(color: Color(0xFF888888)))),
+                                  style: TextStyle(color: Ui.muted))),
                         ),
                       ..._pendingVendors.map(_buildVendorCard),
                     ],
@@ -107,10 +104,10 @@ class _AdminManageScreenState extends State<AdminManageScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: Ui.surface,
         borderRadius: BorderRadius.circular(10),
         boxShadow: AppTheme.cardShadow,
-        border: Border.all(color: const Color(0xFFE0E0E0)),
+        border: Border.all(color: Ui.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +116,7 @@ class _AdminManageScreenState extends State<AdminManageScreen> {
               style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
           const SizedBox(height: 2),
           Text('Applicant: $applicant',
-              style: const TextStyle(color: Color(0xFF666666), fontSize: 12)),
+              style: const TextStyle(color: Ui.muted, fontSize: 12)),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -141,8 +138,8 @@ class _AdminManageScreenState extends State<AdminManageScreen> {
                   label: const Text('Reject'),
                   onPressed: () => _setVendorStatus(userId, 'rejected'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFFEF233C),
-                    side: const BorderSide(color: Color(0xFFEF233C)),
+                    foregroundColor: Ui.bad,
+                    side: const BorderSide(color: Ui.bad),
                   ),
                 ),
               ),

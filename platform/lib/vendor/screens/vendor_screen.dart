@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:aidvise_platform/shared/app_frame.dart' show DismissKeyboardOnNav;
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/layout.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
+import 'package:aidvise_platform/vendor/pages/applicants_page.dart';
+import 'package:aidvise_platform/shared/app_frame.dart'
+    show DismissKeyboardOnNav;
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/feedback.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/shared/utils/app_page_route.dart';
 import 'package:aidvise_platform/shared/widgets/app_card.dart';
-import 'package:aidvise_platform/shared/widgets/app_sidebar.dart';
 import 'package:aidvise_platform/vendor/screens/vendor_listings_screen.dart';
-import 'package:aidvise_platform/vendor/screens/vendor_applicants_screen.dart';
 
 /// Vendor shell — same structure as the job-seeker side: a sidebar drawer,
 /// tabs that slide, and the shared card system. Unapproved vendor accounts
@@ -20,141 +23,81 @@ class VendorScreen extends StatefulWidget {
   State<VendorScreen> createState() => _VendorScreenState();
 }
 
-class _VendorScreenState extends State<VendorScreen>
-    with SingleTickerProviderStateMixin {
-  int _currentTab = 0;
+enum _Area { home, listings, applicants, profile }
 
-  /// Tabs are built on first visit, so a hidden screen never runs its loaders.
-  final Set<int> _visited = {0};
+/// The employer's web app: the draft's sidebar shell around four areas,
+/// each with its own page history.
+class _VendorScreenState extends State<VendorScreen> {
+  _Area _current = _Area.home;
+  final Set<_Area> _visited = {_Area.home};
+  final Map<_Area, GlobalKey<NavigatorState>> _navKeys = {
+    for (final a in _Area.values) a: GlobalKey<NavigatorState>(),
+  };
 
-  /// Which edge the incoming tab slides from: +1 opening a section, -1
-  /// returning home, so back reverses the motion of forward.
-  double _slideFrom = 1;
-
-  late final AnimationController _tabSlide = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 260),
-    value: 1,
-  );
-
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _homeNavKey = GlobalKey<NavigatorState>();
-  final _profileNavKey = GlobalKey<NavigatorState>();
-
-  @override
-  void dispose() {
-    _tabSlide.dispose();
-    super.dispose();
-  }
-
-  void _goToTab(int index) {
-    if (index == _currentTab) return;
+  void _open(_Area area) {
     setState(() {
-      _visited.add(index);
-      _slideFrom = index == 0 ? -1 : 1; // home is "back"
-      _currentTab = index;
+      // Its own menu entry again: a fresh Navigator, back to its first page.
+      if (area == _current) _navKeys[area] = GlobalKey<NavigatorState>();
+      _visited.add(area);
+      _current = area;
     });
-    _tabSlide.forward(from: 0);
   }
-
-  Widget _tab(int index, Widget child) =>
-      _visited.contains(index) ? child : const SizedBox.shrink();
 
   Future<void> _logout() async {
     await ApiService.logout();
     if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-      AppPageRoute(builder: loginScreenBuilder),
-      (_) => false,
-    );
+    Navigator.of(context).pushAndRemoveUntil(AppPageRoute(builder: loginScreenBuilder), (_) => false);
   }
 
-  void _push(Widget screen) =>
-      _homeNavKey.currentState?.push(AppPageRoute(builder: (_) => screen));
+  Widget _page(_Area area) => switch (area) {
+        _Area.home => _VendorHomeTab(
+            openListings: () => _open(_Area.listings),
+            openApplicants: () => _open(_Area.applicants),
+            openProfile: () => _open(_Area.profile),
+          ),
+        _Area.listings => const VendorListingsScreen(),
+        _Area.applicants => ApplicantsPage(onPostJob: () => _open(_Area.listings)),
+        _Area.profile => _VendorProfileTab(onLogout: _logout),
+      };
 
   @override
   Widget build(BuildContext context) {
+    const items = [
+      (Icons.home_outlined, 'Home'),
+      (Icons.work_outline, 'Listings'),
+      (Icons.people_outline, 'Applicants'),
+      (Icons.person_outline, 'Profile'),
+    ];
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
-        final navKey = _currentTab == 0 ? _homeNavKey : _profileNavKey;
-        if (navKey.currentState?.canPop() ?? false) {
-          navKey.currentState?.pop();
-        } else if (_currentTab != 0) {
-          _goToTab(0);
+        final nav = _navKeys[_current]!.currentState;
+        if (nav?.canPop() ?? false) {
+          nav!.pop();
+        } else if (_current != _Area.home) {
+          _open(_Area.home);
         }
       },
       child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.transparent,
-        drawerScrimColor: Colors.transparent,
-        endDrawer: AppSidebar(items: [
-          AppSidebarItem(
-              icon: Icons.home, label: 'Home', onTap: () => _goToTab(0)),
-          AppSidebarItem(
-              icon: Icons.work,
-              label: 'Listings',
-              onTap: () {
-                _goToTab(0);
-                _push(const VendorListingsScreen());
-              }),
-          AppSidebarItem(
-              icon: Icons.people,
-              label: 'Applicants',
-              onTap: () {
-                _goToTab(0);
-                _push(const VendorApplicantsScreen());
-              }),
-          AppSidebarItem(
-              icon: Icons.person, label: 'Profile', onTap: () => _goToTab(1)),
-        ]),
-        body: AnimatedBuilder(
-          animation: _tabSlide,
-          builder: (context, child) {
-            final t = Curves.easeOutCubic.transform(_tabSlide.value);
-            return Opacity(
-              opacity: t,
-              child: FractionalTranslation(
-                translation: Offset(0.08 * _slideFrom * (1 - t), 0),
-                child: child,
-              ),
-            );
-          },
+        backgroundColor: Ui.bg,
+        body: UiShell(
+          selected: _current.index,
+          items: [
+            for (final a in _Area.values)
+              UiNavItem(icon: items[a.index].$1, label: items[a.index].$2, onTap: () => _open(a)),
+          ],
           child: IndexedStack(
-            index: _currentTab,
+            index: _current.index,
             children: [
-              Navigator(
-                key: _homeNavKey,
-                observers: [DismissKeyboardOnNav()],
-                onGenerateRoute: (_) => AppPageRoute(
-                  builder: (_) => _VendorHomeTab(
-                    openSidebar: () =>
-                        _scaffoldKey.currentState?.openEndDrawer(),
-                    openProfile: () => _homeNavKey.currentState?.push(
-                      AppPageRoute(
-                        builder: (_) => _VendorProfileTab(
-                          onLogout: _logout,
-                          onBack: () => _homeNavKey.currentState?.pop(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              _tab(
-                1,
-                Navigator(
-                  key: _profileNavKey,
-                  observers: [DismissKeyboardOnNav()],
-                  onGenerateRoute: (_) => AppPageRoute(
-                    builder: (_) => _VendorProfileTab(
-                      onLogout: _logout,
-                      onBack: () => _goToTab(0),
-                    ),
-                  ),
-                ),
-              ),
+              for (final a in _Area.values)
+                _visited.contains(a)
+                    ? Navigator(
+                        key: _navKeys[a],
+                        observers: [DismissKeyboardOnNav()],
+                        onGenerateRoute: (_) => AppPageRoute(builder: (_) => _page(a)),
+                      )
+                    : const SizedBox.shrink(),
             ],
           ),
         ),
@@ -163,12 +106,12 @@ class _VendorScreenState extends State<VendorScreen>
   }
 }
 
-// ── Home tab ─────────────────────────────────────────────────────────────────
-
 class _VendorHomeTab extends StatefulWidget {
-  final VoidCallback openSidebar;
+  final VoidCallback openListings;
+  final VoidCallback openApplicants;
   final VoidCallback openProfile;
-  const _VendorHomeTab({required this.openSidebar, required this.openProfile});
+  const _VendorHomeTab(
+      {required this.openListings, required this.openApplicants, required this.openProfile});
 
   @override
   State<_VendorHomeTab> createState() => _VendorHomeTabState();
@@ -210,126 +153,70 @@ class _VendorHomeTabState extends State<_VendorHomeTab> {
     }
   }
 
-  Future<void> _open(Widget screen) async {
-    await Navigator.of(context).push(AppPageRoute(builder: (_) => screen));
-    _load(); // counts may have changed
-  }
-
+  /// Draft "Sidebar dashboard", employer edition: greeting, tool tiles,
+  /// and what being approved means.
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: _loading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppTheme.primary))
-          : RefreshIndicator(
-              onRefresh: _load,
-              color: AppTheme.primary,
-              child: ListView(
-                padding: const EdgeInsets.all(24),
-                children: [
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: widget.openProfile,
-                        child: Container(
-                          width: 52,
-                          height: 52,
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                              color: AppTheme.primary, shape: BoxShape.circle),
-                          child: Text(
-                            (_companyName?.isNotEmpty == true
-                                    ? _companyName!.substring(0, 1)
-                                    : 'V')
-                                .toUpperCase(),
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Hello',
-                                style: TextStyle(
-                                    color: AppTheme.primary, fontSize: 15)),
-                            Text(
-                              _companyName ?? 'Vendor Workspace',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: AppTheme.primary,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.menu,
-                            color: AppTheme.primary, size: 32),
-                        onPressed: widget.openSidebar,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Your workspace',
-                    style: TextStyle(
-                        color: AppTheme.primary,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 14),
-                  GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 14,
-                    crossAxisSpacing: 14,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 1.05,
-                    children: [
-                      AppCard(
-                        tile: true,
-                        icon: Icons.work,
-                        title: 'Listings',
-                        status: _listingCount == 1
-                            ? '1 listing'
-                            : '$_listingCount listings',
-                        statusIcon: Icons.post_add,
-                        onTap: () => _open(const VendorListingsScreen()),
-                      ),
-                      AppCard(
-                        tile: true,
-                        icon: Icons.people,
-                        title: 'Applicants',
-                        status: _pendingReview > 0
-                            ? '$_pendingReview awaiting review'
-                            : '$_applicantCount total',
-                        statusIcon: Icons.fact_check,
-                        onTap: () => _open(const VendorApplicantsScreen()),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const AppCard(
-                    icon: Icons.verified,
-                    title: 'Approved vendor',
-                    description:
-                        'Your listings appear in the job recommendations of '
-                        "users whose assessment matches the job's career "
-                        'family.',
-                  ),
-                ],
+    final name = _companyName ?? 'your company';
+    final tiles = [
+      (Icons.work_outline, 'Listings', _listingCount == 1 ? '1 listing' : '$_listingCount listings',
+          Tone.brand, widget.openListings),
+      (Icons.people_outline, 'Applicants', '$_applicantCount total', Tone.plain, widget.openApplicants),
+      (Icons.mark_email_unread_outlined, 'To review', '$_pendingReview awaiting review',
+          _pendingReview > 0 ? Tone.warn : Tone.good, widget.openApplicants),
+      (Icons.person_outline, 'Profile', 'Company and account', Tone.plain, widget.openProfile),
+    ];
+    return UiState(
+      loading: _loading,
+      builder: () => UiPage(children: [
+        Row(children: [
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Eyebrow(longToday()),
+              Text('${greeting()}, $name', style: Ui.display(Ui.step3)),
+            ]),
+          ),
+          Clickable(
+            onTap: widget.openProfile,
+            child: UiAvatar(name, background: Ui.steel, foreground: Colors.white),
+          ),
+        ]),
+        LayoutBuilder(builder: (context, box) {
+          final cols = box.maxWidth < 520 ? 1 : box.maxWidth < 760 ? 2 : 4;
+          final width = (box.maxWidth - 12 * (cols - 1)) / cols;
+          return Wrap(spacing: 12, runSpacing: 12, children: [
+            for (final (icon, title, status, tone, onTap) in tiles)
+              SizedBox(
+                width: width,
+                child: Panel(
+                  onTap: onTap,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    IconTile(icon),
+                    const SizedBox(height: 14),
+                    Text(title.toUpperCase(),
+                        style: Ui.body(weight: FontWeight.w800, color: Ui.brand)
+                            .copyWith(letterSpacing: 0.06 * Ui.step0)),
+                    const SizedBox(height: 14),
+                    Pill(status, tone: tone),
+                  ]),
+                ),
               ),
+          ]);
+        }),
+        Panel(
+          child: Row(children: [
+            const IconTile(Icons.verified_outlined),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('Approved employer', style: Ui.body(weight: FontWeight.w700)),
+                Text('Your live listings appear to job seekers whose assessment matches the job\'s field.',
+                    style: Ui.meta),
+              ]),
             ),
+          ]),
+        ),
+      ]),
     );
   }
 }
@@ -338,8 +225,7 @@ class _VendorHomeTabState extends State<_VendorHomeTab> {
 
 class _VendorProfileTab extends StatefulWidget {
   final VoidCallback onLogout;
-  final VoidCallback onBack;
-  const _VendorProfileTab({required this.onLogout, required this.onBack});
+  const _VendorProfileTab({required this.onLogout});
 
   @override
   State<_VendorProfileTab> createState() => _VendorProfileTabState();
@@ -389,14 +275,6 @@ class _VendorProfileTabState extends State<_VendorProfileTab> {
             const SizedBox(height: 8),
             Row(
               children: [
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  icon: const Icon(Icons.arrow_back,
-                      color: AppTheme.primary, size: 26),
-                  onPressed: widget.onBack,
-                ),
-                const SizedBox(width: 12),
                 const Text(
                   'Profile',
                   style: TextStyle(
@@ -426,8 +304,7 @@ class _VendorProfileTabState extends State<_VendorProfileTab> {
             ),
             const SizedBox(height: 24),
             SizedBox(
-              width: double.infinity,
-              height: 50,
+              height: 44,
               child: OutlinedButton(
                 onPressed: () => showFeedbackDialog(context),
                 style: OutlinedButton.styleFrom(
@@ -444,17 +321,16 @@ class _VendorProfileTabState extends State<_VendorProfileTab> {
             ),
             const SizedBox(height: 12),
             SizedBox(
-              width: double.infinity,
-              height: 50,
+              height: 44,
               child: OutlinedButton.icon(
                 icon: const Icon(Icons.logout, size: 18),
                 label: const Text('Log Out',
                     style:
                         TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFFEF233C),
+                  foregroundColor: Ui.bad,
                   backgroundColor: Colors.white,
-                  side: const BorderSide(color: Color(0xFFEF233C)),
+                  side: const BorderSide(color: Ui.bad),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8)),
                 ),

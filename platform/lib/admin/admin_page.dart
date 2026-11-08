@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/layout.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
@@ -24,32 +27,38 @@ class AdminPage extends StatelessWidget {
     this.filters,
   });
 
+  /// Draft page structure: eyebrow-less title with actions on the right,
+  /// search and filters under it, content filling the rest.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(title: Text(title), actions: actions),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 960),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+    final pad = isNarrow(context) ? 16.0 : 24.0;
+    return Material(
+      color: context.ui.bg,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(pad, pad, pad, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ContentHead(title: title, actions: [
               if (onSearch != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                SizedBox(
+                  width: 280,
                   child: TextField(
                     onSubmitted: onSearch,
                     textInputAction: TextInputAction.search,
-                    decoration: adminInputDecoration(searchHint ?? 'Search')
-                        .copyWith(prefixIcon: const Icon(Icons.search, color: AppTheme.primary)),
+                    style: context.ui.body(),
+                    decoration: InputDecoration(
+                      hintText: searchHint ?? 'Search',
+                      prefixIcon: Icon(Icons.search, size: 18, color: context.ui.muted),
+                    ),
                   ),
                 ),
-              if (filters != null)
-                Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 8), child: filters),
-              Expanded(child: body),
-            ],
-          ),
+              ...actions,
+            ]),
+            if (filters != null) ...[const SizedBox(height: 14), filters!],
+            const SizedBox(height: 16),
+            Expanded(child: body),
+          ],
         ),
       ),
     );
@@ -76,21 +85,10 @@ class AdminFilterChips<T> extends StatelessWidget {
       {super.key, required this.options, required this.selected, required this.onSelected});
 
   @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      children: [
+  Widget build(BuildContext context) => Wrap(spacing: 6, runSpacing: 6, children: [
         for (final (value, label) in options)
-          ChoiceChip(
-            label: Text(label),
-            selected: selected == value,
-            selectedColor: AppTheme.primary,
-            labelStyle: TextStyle(color: selected == value ? Colors.white : AppTheme.primary),
-            onSelected: (_) => onSelected(value),
-          ),
-      ],
-    );
-  }
+          UiChip(label, selected: selected == value, onTap: () => onSelected(value)),
+      ]);
 }
 
 /// Ask before anything that changes what users see or can do. Returns true
@@ -176,13 +174,13 @@ class AdminListState extends StatelessWidget {
     if (error != null) {
       return Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(error!, style: const TextStyle(color: Color(0xFF888888))),
+          Text(error!, style: TextStyle(color: context.ui.muted)),
           TextButton(onPressed: onRetry, child: const Text('Try again')),
         ]),
       );
     }
     if (empty) {
-      return Center(child: Text(emptyText, style: const TextStyle(color: Color(0xFF888888))));
+      return Center(child: Text(emptyText, style: TextStyle(color: context.ui.muted)));
     }
     return child;
   }
@@ -253,7 +251,7 @@ mixin AdminPagedList<T extends StatefulWidget> on State<T> {
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Text('$total $noun${total == 1 ? '' : 's'}',
-              style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+              style: TextStyle(color: context.ui.muted, fontSize: 12)),
         ),
         ...rows,
         if (items.length < total)

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/layout.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/admin/admin_page.dart';
-import 'package:aidvise_platform/shared/widgets/app_card.dart';
 import 'package:aidvise_platform/shared/widgets/listing_form_sheet.dart';
 
 /// Every vendor's job listings: fix a listing's details, or hide one from
@@ -78,33 +80,35 @@ class _AdminListingsScreenState extends State<AdminListingsScreen>
         emptyText: 'No listings match.',
         onRetry: load,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          padding: const EdgeInsets.only(bottom: 24),
           children: pagedChildren('listing', [
-            for (final l in items)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: AppCard(
-                  compact: true,
-                  icon: Icons.work_outline,
-                  title: l['title'] as String,
-                  inlineTag: l['is_active'] == true ? null : 'HIDDEN',
-                  description: [
-                    l['company_name'] ?? 'Unknown employer',
-                    if (l['location'] != null) l['location'],
-                    if (l['salary'] != null) l['salary'],
-                  ].join(' · '),
-                  onTap: () => _edit(l),
-                  actions: [
-                    TextButton(onPressed: () => _edit(l), child: const Text('Edit')),
-                    TextButton(
-                      onPressed: () => _toggle(l),
-                      style: TextButton.styleFrom(
-                          foregroundColor: l['is_active'] == true ? AppTheme.danger : AppTheme.primary),
-                      child: Text(l['is_active'] == true ? 'Hide' : 'Show'),
-                    ),
-                  ],
-                ),
-              ),
+            // Draft "Data table": one row per listing, actions at the end.
+            UiTable(
+              columns: const ['Job', 'Employer', 'Location', 'Salary', 'Status', ''],
+              rows: [
+                for (final l in items)
+                  UiTableRow(
+                    [
+                      Text(l['title'] as String, style: Ui.body(weight: FontWeight.w700)),
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        LogoTile(l['company_name'] as String? ?? '?', size: 26),
+                        const SizedBox(width: 8),
+                        Text(l['company_name'] as String? ?? 'Unknown employer'),
+                      ]),
+                      Text(l['location'] as String? ?? '—'),
+                      Text(l['salary'] as String? ?? '—', style: Ui.body().copyWith(fontFeatures: Ui.tabular)),
+                      l['is_active'] == true ? const Pill('Shown', tone: Tone.good) : const Pill('Hidden', tone: Tone.warn),
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        UiButton.ghost('Edit', dense: true, onPressed: () => _edit(l)),
+                        const SizedBox(width: 6),
+                        UiButton.ghost(l['is_active'] == true ? 'Hide' : 'Show', dense: true, onPressed: () => _toggle(l)),
+                      ]),
+                    ],
+                    onTap: () => _edit(l),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 10),
           ]),
         ),
       ),

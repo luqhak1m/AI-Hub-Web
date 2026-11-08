@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 
@@ -107,9 +108,9 @@ class _ListingFormSheetState extends State<ListingFormSheet> {
 
   InputDecoration _decoration(String hint) => InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
+        hintStyle: const TextStyle(color: Ui.muted, fontSize: 14),
         filled: true,
-        fillColor: const Color(0xFFF5F5F5),
+        fillColor: Ui.surface,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -133,7 +134,7 @@ class _ListingFormSheetState extends State<ListingFormSheet> {
             const SizedBox(height: 16),
             if (_error != null) ...[
               Text(_error!,
-                  style: const TextStyle(color: Color(0xFFEF233C), fontSize: 13)),
+                  style: const TextStyle(color: Ui.bad, fontSize: 13)),
               const SizedBox(height: 10),
             ],
             TextField(
@@ -241,15 +242,14 @@ class _ListingFormSheetState extends State<ListingFormSheet> {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              width: double.infinity,
-              height: 50,
+              height: 44,
               child: ElevatedButton(
                 onPressed: _submitting ? null : _submit,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primary, foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  disabledBackgroundColor: const Color(0xFFCCCCCC),
+                  disabledBackgroundColor: Ui.surface3,
                 ),
                 child: _submitting
                     ? const SizedBox(width: 22, height: 22,

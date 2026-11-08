@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
-import 'package:aidvise_platform/shared/widgets/aidvise_wordmark.dart';
 import 'package:aidvise_platform/shared/utils/app_page_route.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -78,40 +79,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Ui.bg,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Ui.bg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppTheme.primary),
+          icon: const Icon(Icons.arrow_back, color: Ui.brand),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
-            child: Form(
+            padding: const EdgeInsets.all(16),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
+              child: Panel(
+              padding: const EdgeInsets.all(28),
+              child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const AidViseWordmark(fontSize: 34),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Create Account',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppTheme.primary,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  const Align(alignment: Alignment.centerLeft, child: Wordmark(size: 26)),
+                  const SizedBox(height: 22),
+                  const Eyebrow('New here'),
+                  Text('Create account', style: Ui.display(Ui.step3)),
                   const SizedBox(height: 8),
                   const Text(
                     'Join AidVise today',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Color(0xFF888888), fontSize: 15),
+                    style: TextStyle(color: Ui.muted, fontSize: 15),
                   ),
                   const SizedBox(height: 28),
 
@@ -128,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Text(
                       'Vendor accounts post job listings and are reviewed by our team before activation.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xFF888888), fontSize: 12, height: 1.4),
+                      style: TextStyle(color: Ui.muted, fontSize: 12, height: 1.4),
                     ),
                   ],
                   const SizedBox(height: 20),
@@ -170,7 +168,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                          color: const Color(0xFF888888),
+                          color: Ui.muted,
                         ),
                         onPressed: () =>
                             setState(() => _obscurePassword = !_obscurePassword),
@@ -193,7 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscureConfirm ? Icons.visibility_off : Icons.visibility,
-                          color: const Color(0xFF888888),
+                          color: Ui.muted,
                         ),
                         onPressed: () =>
                             setState(() => _obscureConfirm = !_obscureConfirm),
@@ -213,14 +211,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Text(
                       _errorMessage!,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Color(0xFFEF233C), fontSize: 13),
+                      style: const TextStyle(color: Ui.bad, fontSize: 13),
                     ),
                   ],
 
                   const SizedBox(height: 20),
 
                   SizedBox(
-                    height: 50,
+                    height: 44,
                     child: ElevatedButton(
                       onPressed: _loading ? null : _submit,
                       style: ElevatedButton.styleFrom(
@@ -230,7 +228,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        disabledBackgroundColor: const Color(0xFF888888),
+                        disabledBackgroundColor: Ui.muted,
                       ),
                       child: _loading
                           ? const SizedBox(
@@ -254,7 +252,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       const Text(
                         'Already have an account? ',
-                        style: TextStyle(color: Color(0xFF888888)),
+                        style: TextStyle(color: Ui.muted),
                       ),
                       GestureDetector(
                         onTap: () => Navigator.of(context).pop(),
@@ -271,7 +269,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ],
               ),
-            ),
+            ))),
           ),
         ),
       ),
@@ -288,12 +286,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         decoration: BoxDecoration(
           color: selected ? AppTheme.primary : Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: selected ? AppTheme.primary : const Color(0xFFDDDDDD)),
+          border: Border.all(color: selected ? AppTheme.primary : Ui.line),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? Colors.white : const Color(0xFF666666),
+            color: selected ? Colors.white : Ui.muted,
             fontSize: 14,
             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
           ),
@@ -305,9 +303,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Color(0xFF888888)),
+      labelStyle: const TextStyle(color: Ui.muted),
       filled: true,
-      fillColor: const Color(0xFFF5F5F5),
+      fillColor: Ui.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
         borderSide: BorderSide.none,
@@ -316,7 +314,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: AppTheme.primary, width: 1.5),
       ),
-      errorStyle: const TextStyle(color: Color(0xFFEF233C), fontSize: 12),
+      errorStyle: const TextStyle(color: Ui.bad, fontSize: 12),
     );
   }
 }

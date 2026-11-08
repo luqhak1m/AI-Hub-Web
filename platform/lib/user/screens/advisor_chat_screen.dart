@@ -5,7 +5,7 @@ import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
 import 'package:aidvise_platform/user/utils/paywall.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
-import 'package:aidvise_platform/shared/widgets/app_background.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 
 /// Full-screen career advisor chat. Opened from the bot button on the
 /// results screen via [advisorChatRoute], which slides it in over the page.
@@ -30,7 +30,8 @@ Route<void> advisorChatRoute({required int sessionId, String? openingMessage}) {
   return PageRouteBuilder<void>(
     transitionDuration: const Duration(milliseconds: 280),
     reverseTransitionDuration: const Duration(milliseconds: 220),
-    pageBuilder: (_, __, ___) => AppBackground(
+    pageBuilder: (_, __, ___) => ColoredBox(
+      color: Ui.bg,
       child: AdvisorChatScreen(
           sessionId: sessionId, openingMessage: openingMessage),
     ),
@@ -159,7 +160,7 @@ class _AdvisorChatScreenState extends State<AdvisorChatScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
                 child: Text(
                   _error!,
-                  style: const TextStyle(color: Color(0xFFEF233C), fontSize: 12),
+                  style: const TextStyle(color: Ui.bad, fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -192,7 +193,7 @@ class _AdvisorChatScreenState extends State<AdvisorChatScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.smart_toy_outlined, size: 44, color: Color(0xFFCCCCCC)),
+            Icon(Icons.smart_toy_outlined, size: 44, color: Ui.surface3),
             SizedBox(height: 14),
             Text(
               'Ask anything about your results',
@@ -205,7 +206,7 @@ class _AdvisorChatScreenState extends State<AdvisorChatScreen> {
             SizedBox(height: 8),
             Text(
               '"Why did I get this?" · "What skills should I build?"',
-              style: TextStyle(color: Color(0xFF888888), fontSize: 13),
+              style: TextStyle(color: Ui.muted, fontSize: 13),
               textAlign: TextAlign.center,
             ),
           ],
@@ -258,7 +259,7 @@ class _AdvisorChatScreenState extends State<AdvisorChatScreen> {
                   listBullet:
                       const TextStyle(color: AppTheme.primary, fontSize: 14),
                   blockquote:
-                      const TextStyle(color: Color(0xFF666666), fontSize: 14),
+                      const TextStyle(color: Ui.muted, fontSize: 14),
                 ),
               ),
       ),
@@ -286,7 +287,7 @@ class _AdvisorChatScreenState extends State<AdvisorChatScreen> {
       padding: EdgeInsets.fromLTRB(
           16, 10, 16, 10 + MediaQuery.of(context).padding.bottom),
       decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: Color(0xFFE0E0E0), width: 0.5)),
+        border: Border(top: BorderSide(color: Ui.line, width: 0.5)),
       ),
       child: Row(
         children: [
@@ -303,7 +304,7 @@ class _AdvisorChatScreenState extends State<AdvisorChatScreen> {
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
                   hintText: 'Ask about your results...',
-                  hintStyle: const TextStyle(color: Color(0xFFAAAAAA)),
+                  hintStyle: const TextStyle(color: Ui.muted),
                   filled: true,
                   fillColor: Colors.white,
                   contentPadding:

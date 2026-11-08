@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/components.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/user/models/profile_model.dart';
 import 'package:aidvise_platform/user/models/template_model.dart';
@@ -134,7 +136,7 @@ class _TemplateCatalogScreenState extends State<TemplateCatalogScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
           : _error != null
-              ? Center(child: Text(_error!, style: const TextStyle(color: Color(0xFFEF233C))))
+              ? Center(child: Text(_error!, style: const TextStyle(color: Ui.bad)))
               : Column(children: [
                   if (widget.jobTitle != null)
                     Container(
@@ -142,7 +144,7 @@ class _TemplateCatalogScreenState extends State<TemplateCatalogScreen> {
                       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
+                        color: Ui.surface,
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: AppTheme.cardShadow,
                       ),
@@ -159,96 +161,73 @@ class _TemplateCatalogScreenState extends State<TemplateCatalogScreen> {
                         ],
                       ),
                     ),
+                  // A grid of full previews: on a wide screen people choose a
+                  // template by looking at it.
                   Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _templates.length,
-                      itemBuilder: (_, i) {
-                        final t = _templates[i];
-                        final isSelected = _selectedId == t.id;
-                        final isRecommended = _recommendedId == t.id;
-                        return GestureDetector(
-                          onTap: () => setState(() => _selectedId = t.id),
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF5F5F5),
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: AppTheme.cardShadow,
-                              border: isSelected
-                                  ? Border.all(color: AppTheme.primary, width: 1.5)
-                                  : null,
-                            ),
-                            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: SizedBox(
-                                  width: 62,
-                                  height: 88,
-                                  child: TemplatePreviewImage(
-                                    previewPath: t.previewImageUrl,
-                                    fit: BoxFit.cover,
+                    child: LayoutBuilder(builder: (context, box) {
+                      final cols = box.maxWidth < 560 ? 1 : box.maxWidth < 900 ? 2 : 3;
+                      return GridView.builder(
+                        padding: const EdgeInsets.all(24),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: cols,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 0.72,
+                        ),
+                        itemCount: _templates.length,
+                        itemBuilder: (_, i) {
+                          final t = _templates[i];
+                          final isSelected = _selectedId == t.id;
+                          final isRecommended = _recommendedId == t.id;
+                          final hint = t.eligibilityHint(_userCounts);
+                          return Panel(
+                            onTap: () => setState(() => _selectedId = t.id),
+                            padding: const EdgeInsets.all(12),
+                            color: isSelected ? Ui.brandSoft : Ui.surface,
+                            borderColor: isSelected ? Ui.brandFill : null,
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Expanded(
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Ui.surface,
+                                    borderRadius: BorderRadius.circular(Ui.radiusSm),
+                                    border: Border.all(color: Ui.line),
                                   ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: TemplatePreviewImage(previewPath: t.previewImageUrl, fit: BoxFit.cover),
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                  Row(children: [
-                                    Text(
-                                      t.name,
-                                      style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w600),
-                                    ),
-                                    if (isRecommended) ...[
-                                      const SizedBox(width: 8),
-                                      const Text(
-                                        'recommended',
-                                        style: TextStyle(color: Color(0xFF888888), fontSize: 12, fontStyle: FontStyle.italic),
-                                      ),
-                                    ],
-                                  ]),
-                                  const SizedBox(height: 4),
-                                  Text(t.description, style: const TextStyle(color: Color(0xFF888888), fontSize: 13)),
-                                  Builder(builder: (_) {
-                                    final hint = t.eligibilityHint(_userCounts);
-                                    if (hint.isEmpty) return const SizedBox.shrink();
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 4),
-                                      child: Text(hint, style: const TextStyle(color: Color(0xFF888888), fontSize: 11)),
-                                    );
-                                  }),
-                                ]),
-                              ),
-                              if (isSelected)
-                                const Icon(Icons.check_circle, color: AppTheme.primary),
+                              const SizedBox(height: 12),
+                              Row(children: [
+                                Expanded(child: Text(t.name, style: Ui.body(size: Ui.step1, weight: FontWeight.w700))),
+                                if (isRecommended) const Pill('Recommended', tone: Tone.good),
+                                if (isSelected) ...[
+                                  const SizedBox(width: 6),
+                                  const Icon(Icons.check_circle, size: 20, color: Ui.brandFill),
+                                ],
+                              ]),
+                              const SizedBox(height: 2),
+                              Text(t.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: Ui.meta),
+                              if (hint.isNotEmpty) Text(hint, style: Ui.meta.copyWith(fontSize: 11)),
                             ]),
-                          ),
-                        );
-                      },
-                    ),
+                          );
+                        },
+                      );
+                    }),
                   ),
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                     decoration: const BoxDecoration(
-                      color: Colors.white,
-                      border: Border(top: BorderSide(color: AppTheme.primary, width: 0.5)),
+                      color: Ui.surface,
+                      border: Border(top: BorderSide(color: Ui.line)),
                     ),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _selectedId == null ? null : _generate,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          disabledBackgroundColor: const Color(0xFFCCCCCC),
-                        ),
-                        child: const Text('Generate Resume', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                      ),
-                    ),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Text(_selectedId == null ? 'Pick a template to continue' : 'Ready to generate',
+                          style: Ui.meta),
+                      const SizedBox(width: 14),
+                      UiButton('Generate resume', onPressed: _selectedId == null ? null : _generate),
+                    ]),
                   ),
                 ]),
     );

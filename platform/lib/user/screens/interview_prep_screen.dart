@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,9 +20,7 @@ class InterviewPrepScreen extends StatefulWidget {
 }
 
 class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
-  final PageController _pageController = PageController();
   Map<String, dynamic>? _prep;
-  int _page = 0;
   bool _loading = true;
   String? _error;
 
@@ -47,7 +46,6 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
     super.dispose();
   }
 
@@ -85,7 +83,7 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
           : _prep == null
               ? Center(
                   child: Text(_error ?? 'No prep materials available.',
-                      style: const TextStyle(color: Color(0xFF888888))))
+                      style: const TextStyle(color: Ui.muted)))
               : Column(
                   children: [
                     Padding(
@@ -101,40 +99,27 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
                           ),
                           const SizedBox(height: 4),
                           const Text(
-                            'Materials from the company to help you prepare. '
-                            'Swipe through each card.',
+                            'Everything the company shared to help you prepare.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xFF888888), fontSize: 12.5),
+                            style: TextStyle(color: Ui.muted, fontSize: 12.5),
                           ),
                         ],
                       ),
                     ),
+                    // Every card at once: two across on a wide screen. Cards
+                    // lay themselves out in a fixed height, so the grid gives
+                    // each one.
                     Expanded(
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: _cards.length,
-                        onPageChanged: (i) => setState(() => _page = i),
-                        itemBuilder: (_, i) => _buildCard(_cards[i]),
-                      ),
-                    ),
-                    // Page dots
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 28, top: 4),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(_cards.length, (i) {
-                          final active = i == _page;
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            margin: const EdgeInsets.symmetric(horizontal: 3),
-                            width: active ? 18 : 7,
-                            height: 7,
-                            decoration: BoxDecoration(
-                              color: active ? AppTheme.primary : const Color(0xFFCCCCCC),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          );
-                        }),
+                      child: LayoutBuilder(
+                        builder: (context, box) => GridView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: box.maxWidth >= 900 ? 2 : 1,
+                            mainAxisExtent: 460,
+                          ),
+                          itemCount: _cards.length,
+                          itemBuilder: (_, i) => _buildCard(_cards[i]),
+                        ),
                       ),
                     ),
                   ],
@@ -195,9 +180,9 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
                 style: const TextStyle(fontSize: 13.5),
                 decoration: InputDecoration(
                   hintText: 'Tell them why, e.g. "I have an exam that morning"',
-                  hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
+                  hintStyle: const TextStyle(color: Ui.muted, fontSize: 13),
                   filled: true,
-                  fillColor: const Color(0xFFF5F5F5),
+                  fillColor: Ui.surface,
                   counterText: '',
                   contentPadding: const EdgeInsets.all(12),
                   border: OutlineInputBorder(
@@ -217,7 +202,7 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppTheme.primary,
-                  side: const BorderSide(color: Color(0xFFCCCCCC)),
+                  side: const BorderSide(color: Ui.surface3),
                 ),
                 onPressed: () async {
                   final now = DateTime.now();
@@ -242,7 +227,7 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel', style: TextStyle(color: Color(0xFF888888))),
+              child: const Text('Cancel', style: TextStyle(color: Ui.muted)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -484,8 +469,7 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
               // 7. Contact the employer
               const SizedBox(height: 18),
               SizedBox(
-                width: double.infinity,
-                height: 46,
+                height: 44,
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.forum_outlined, size: 17),
                   label: Text('Contact $company',
@@ -563,7 +547,7 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
+          color: Ui.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: AppTheme.cardShadow,
           border: Border.all(color: const Color(0xFFE5E5E5)),
@@ -586,7 +570,7 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
                 Expanded(
                   child: Text(_typeLabels[type] ?? type.toUpperCase(),
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 10.5,
+                          color: Ui.muted, fontSize: 10.5,
                           fontWeight: FontWeight.w700, letterSpacing: 1)),
                 ),
               ],
@@ -604,7 +588,7 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
                   children: [
                     Text(card['body'] as String? ?? '',
                         style: const TextStyle(
-                            color: Color(0xFF444444), fontSize: 15, height: 1.6)),
+                            color: Ui.muted, fontSize: 15, height: 1.6)),
                     if (eventAt != null) ...[
                       const SizedBox(height: 14),
                       Container(
@@ -633,11 +617,11 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
                             ? const Row(
                                 children: [
                                   Icon(Icons.schedule_send, size: 15,
-                                      color: Color(0xFF666666)),
+                                      color: Ui.muted),
                                   SizedBox(width: 6),
                                   Text('Time change requested — awaiting reply',
                                       style: TextStyle(
-                                          color: Color(0xFF666666), fontSize: 12,
+                                          color: Ui.muted, fontSize: 12,
                                           fontWeight: FontWeight.w600)),
                                 ],
                               )
@@ -697,12 +681,12 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
                       Row(
                         children: [
                           const Icon(Icons.location_on_outlined,
-                              size: 15, color: Color(0xFF888888)),
+                              size: 15, color: Ui.muted),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(location,
                                 style: const TextStyle(
-                                    color: Color(0xFF666666), fontSize: 12.5)),
+                                    color: Ui.muted, fontSize: 12.5)),
                           ),
                           TextButton(
                             onPressed: () => _openInMaps(card),
@@ -721,7 +705,6 @@ class _InterviewPrepScreenState extends State<InterviewPrepScreen> {
             if (type == 'link' && url != null) ...[
               const SizedBox(height: 12),
               SizedBox(
-                width: double.infinity,
                 height: 44,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.open_in_new, size: 16),

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 
 /// A template's rendered preview image, fetched from the API with auth.
@@ -59,15 +60,15 @@ class _TemplatePreviewImageState extends State<TemplatePreviewImage> {
           );
         }
         if (snapshot.hasError) return _placeholder();
-        return Container(color: const Color(0xFFEEEEEE));
+        return Container(color: Ui.line);
       },
     );
   }
 
   Widget _placeholder() => Container(
-        color: const Color(0xFFEEEEEE),
+        color: Ui.line,
         alignment: Alignment.center,
         child: const Icon(Icons.description_outlined,
-            color: Color(0xFFBBBBBB), size: 28),
+            color: Ui.muted, size: 28),
       );
 }

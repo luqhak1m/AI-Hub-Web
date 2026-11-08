@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/shared/widgets/pdf_frame.dart';
 import 'package:aidvise_platform/user/screens/resume_loading_screen.dart';
@@ -98,8 +99,7 @@ class _ResumePdfScreenState extends State<ResumePdfScreen> {
 
   Widget _buildApplyButton() {
     return SizedBox(
-      width: double.infinity,
-      height: 50,
+      height: 44,
       child: ElevatedButton.icon(
         onPressed: (_applying || _applied) ? null : _confirmApply,
         icon: _applying
@@ -117,8 +117,8 @@ class _ResumePdfScreenState extends State<ResumePdfScreen> {
           backgroundColor: AppTheme.primary,
           foregroundColor: Colors.white,
           elevation: 0,
-          disabledBackgroundColor: const Color(0xFFE0E0E0),
-          disabledForegroundColor: const Color(0xFF888888),
+          disabledBackgroundColor: Ui.line,
+          disabledForegroundColor: Ui.muted,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
@@ -192,7 +192,7 @@ class _ResumePdfScreenState extends State<ResumePdfScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
           : _error != null
-              ? Center(child: Text(_error!, style: const TextStyle(color: Color(0xFFEF233C))))
+              ? Center(child: Text(_error!, style: const TextStyle(color: Ui.bad)))
               : Column(children: [
                       Expanded(child: PdfFrame(bytes: _bytes!)),
                       if (!widget.viewerOnly)
@@ -210,8 +210,7 @@ class _ResumePdfScreenState extends State<ResumePdfScreen> {
                               const SizedBox(height: 10),
                             ],
                             SizedBox(
-                              width: double.infinity,
-                              height: 50,
+                              height: 44,
                               child: OutlinedButton(
                                 onPressed: () => Navigator.of(context).pop(),
                                 style: OutlinedButton.styleFrom(

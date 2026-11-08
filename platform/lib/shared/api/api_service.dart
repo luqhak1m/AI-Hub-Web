@@ -1089,6 +1089,15 @@ class ApiService {
   }
 
   /// Full details for one job listing (job details sheet).
+  /// How the signed-in job seeker matches one listing, component by
+  /// component (skills, experience, interest fit, description), before
+  /// applying.
+  static Future<Map<String, dynamic>> getJobMatch(int listingId) async =>
+      await _decode(
+          await _send(http.get(Uri.parse('$_baseUrl/jobs/listings/$listingId/match'),
+              headers: await _authHeaders())),
+          'Could not load your match') as Map<String, dynamic>;
+
   static Future<Map<String, dynamic>> getJobListing(int listingId) async {
     final response = await _send(http.get(
       Uri.parse('$_baseUrl/jobs/listings/$listingId'),

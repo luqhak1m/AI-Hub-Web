@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
 import 'package:aidvise_platform/user/screens/subscription_screen.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
@@ -21,11 +22,11 @@ bool handleUpgradeRequired(BuildContext context, ApiException e) {
         ],
       ),
       content: Text(e.message,
-          style: const TextStyle(fontSize: 13.5, height: 1.5, color: Color(0xFF444444))),
+          style: const TextStyle(fontSize: 13.5, height: 1.5, color: Ui.muted)),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(),
-          child: const Text('Not now', style: TextStyle(color: Color(0xFF888888))),
+          child: const Text('Not now', style: TextStyle(color: Ui.muted)),
         ),
         ElevatedButton(
           onPressed: () {

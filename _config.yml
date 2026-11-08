@@ -3,4 +3,5 @@
 # of the public site.
 exclude:
   - platform/
+  - draft/
   - README.md

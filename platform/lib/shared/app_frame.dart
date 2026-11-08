@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
-import 'package:aidvise_platform/shared/utils/app_theme.dart';
 import 'package:aidvise_platform/shared/utils/session.dart';
-import 'package:aidvise_platform/shared/widgets/app_background.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 
 /// Dismisses the keyboard whenever the user navigates between pages.
 /// Attach to every Navigator (root + nested tab navigators).
@@ -27,7 +26,11 @@ class DismissKeyboardOnNav extends NavigatorObserver {
 class AppFrame extends StatefulWidget {
   final String title;
   final Widget home;
-  const AppFrame({super.key, required this.title, required this.home});
+
+  /// The design tokens for the whole app. `UiTokens.dark` switches it to the
+  /// drafts' dark palette.
+  final UiTokens tokens;
+  const AppFrame({super.key, required this.title, required this.home, this.tokens = UiTokens.light});
 
   @override
   State<AppFrame> createState() => _AppFrameState();
@@ -95,28 +98,13 @@ class _AppFrameState extends State<AppFrame> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
       navigatorKey: appNavigatorKey,
       navigatorObservers: [DismissKeyboardOnNav()],
-      theme: ThemeData(
-        colorScheme: const ColorScheme.light(
-          primary: AppTheme.primary,
-          surface: Colors.white,
-        ),
-        scaffoldBackgroundColor: Colors.transparent,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          titleTextStyle: TextStyle(
-            color: AppTheme.primary,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-          iconTheme: IconThemeData(color: AppTheme.primary),
-        ),
-      ),
+      // The web design system (shared/ui/tokens.dart): draft fonts and colours.
+      theme: Ui.theme(widget.tokens),
       // Global handlers: every touch feeds the AFK monitor, and tapping
       // outside any text field closes the keyboard on every screen.
       builder: (context, child) {
-        return AppBackground(
+        return ColoredBox(
+            color: context.ui.bg,
             child: Listener(
           behavior: HitTestBehavior.translucent,
           onPointerDown: (_) => ApiService.recordActivity(),

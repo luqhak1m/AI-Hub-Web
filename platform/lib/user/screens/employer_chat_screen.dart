@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:aidvise_platform/shared/utils/app_theme.dart';
 
 /// Direct messaging with an employer. The screen and its entry points exist;
@@ -61,7 +62,7 @@ class EmployerChatScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(Icons.forum_outlined,
-                        size: 44, color: Color(0xFFCCCCCC)),
+                        size: 44, color: Ui.surface3),
                     const SizedBox(height: 14),
                     const Text(
                       'Messaging is coming soon',
@@ -77,7 +78,7 @@ class EmployerChatScreen extends StatelessWidget {
                       'interview. For now, use the details on the prep card.',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 13, height: 1.5),
+                          color: Ui.muted, fontSize: 13, height: 1.5),
                     ),
                   ],
                 ),
@@ -89,7 +90,7 @@ class EmployerChatScreen extends StatelessWidget {
                 16, 10, 16, 10 + MediaQuery.of(context).padding.bottom),
             decoration: const BoxDecoration(
               border:
-                  Border(top: BorderSide(color: Color(0xFFE0E0E0), width: 0.5)),
+                  Border(top: BorderSide(color: Ui.line, width: 0.5)),
             ),
             child: Row(
               children: [
@@ -104,7 +105,7 @@ class EmployerChatScreen extends StatelessWidget {
                     ),
                     child: const Text(
                       'Messaging not available yet',
-                      style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
+                      style: TextStyle(color: Ui.muted, fontSize: 14),
                     ),
                   ),
                 ),
@@ -113,7 +114,7 @@ class EmployerChatScreen extends StatelessWidget {
                   width: 42,
                   height: 42,
                   decoration: const BoxDecoration(
-                      color: Color(0xFFCCCCCC), shape: BoxShape.circle),
+                      color: Ui.surface3, shape: BoxShape.circle),
                   child: const Icon(Icons.arrow_upward,
                       color: Colors.white, size: 20),
                 ),

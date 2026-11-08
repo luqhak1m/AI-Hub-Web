@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:aidvise_platform/shared/ui/tokens.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:aidvise_platform/shared/api/api_service.dart';
@@ -219,18 +220,18 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Text(_error!,
-                  style: const TextStyle(color: Color(0xFFEF233C), fontSize: 13)),
+                  style: const TextStyle(color: Ui.bad, fontSize: 13)),
             ),
           const Text(
             'These cards are shown to candidates the moment you move their '
             'application to Interview status.',
-            style: TextStyle(color: Color(0xFF999999), fontSize: 11.5, height: 1.4),
+            style: TextStyle(color: Ui.muted, fontSize: 11.5, height: 1.4),
           ),
           const SizedBox(height: 12),
           if (_cards.isEmpty) ...[
             const Text('QUICK START',
                 style: TextStyle(
-                    color: Color(0xFF888888), fontSize: 11,
+                    color: Ui.muted, fontSize: 11,
                     fontWeight: FontWeight.w600, letterSpacing: 0.8)),
             const SizedBox(height: 8),
             Wrap(
@@ -246,7 +247,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: const Color(0xFFCCCCCC)),
+                      border: Border.all(color: Ui.surface3),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -271,7 +272,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
 
   InputDecoration _decoration(String hint) => InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 13.5),
+        hintStyle: const TextStyle(color: Ui.muted, fontSize: 13.5),
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -291,7 +292,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: Ui.surface,
         borderRadius: BorderRadius.circular(10),
         boxShadow: AppTheme.cardShadow,
       ),
@@ -300,18 +301,18 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
         children: [
           Row(
             children: [
-              Icon(_typeIcons[card.type], size: 15, color: const Color(0xFF888888)),
+              Icon(_typeIcons[card.type], size: 15, color: Ui.muted),
               const SizedBox(width: 6),
               Text('Card ${index + 1} · ${_typeLabels[card.type]}',
                   style: const TextStyle(
-                      color: Color(0xFF888888), fontSize: 11.5,
+                      color: Ui.muted, fontSize: 11.5,
                       fontWeight: FontWeight.w700, letterSpacing: 0.3)),
               const Spacer(),
               GestureDetector(
                 onTap: () => setState(() {
                   _cards.removeAt(index).dispose();
                 }),
-                child: const Icon(Icons.delete_outline, size: 18, color: Color(0xFF888888)),
+                child: const Icon(Icons.delete_outline, size: 18, color: Ui.muted),
               ),
             ],
           ),
@@ -361,7 +362,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFDDDDDD)),
+                  border: Border.all(color: Ui.line),
                 ),
                 child: Column(
                   children: [
@@ -374,7 +375,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
                           child: Row(
                             children: [
                               const Icon(Icons.location_on_outlined,
-                                  size: 16, color: Color(0xFF666666)),
+                                  size: 16, color: Ui.muted),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -434,7 +435,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
               const Padding(
                 padding: EdgeInsets.only(top: 4),
                 child: Text('Location pinned. This is what candidates will see.',
-                    style: TextStyle(color: Color(0xFF666666), fontSize: 11)),
+                    style: TextStyle(color: Ui.muted, fontSize: 11)),
               ),
             ],
             const SizedBox(height: 8),
@@ -452,7 +453,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.primary,
-                      side: const BorderSide(color: Color(0xFFCCCCCC)),
+                      side: const BorderSide(color: Ui.surface3),
                       backgroundColor: Colors.white,
                     ),
                     onPressed: () => _pickEventAt(card),
@@ -460,7 +461,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
                 ),
                 if (card.eventAt != null)
                   IconButton(
-                    icon: const Icon(Icons.close, size: 16, color: Color(0xFF999999)),
+                    icon: const Icon(Icons.close, size: 16, color: Ui.muted),
                     visualDensity: VisualDensity.compact,
                     tooltip: 'Clear date',
                     onPressed: () => setState(() {
@@ -476,7 +477,7 @@ class _PrepBuilderScreenState extends State<PrepBuilderScreen> {
                   const Expanded(
                     child: Text(
                       'Allow candidate to request a time change',
-                      style: TextStyle(color: Color(0xFF666666), fontSize: 12),
+                      style: TextStyle(color: Ui.muted, fontSize: 12),
                     ),
                   ),
                   Switch(
